@@ -1,9 +1,9 @@
 // API Service for backend communication
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? '/api' 
+  ? 'https://portfolio-backend-nine-ruddy.vercel.app/api' 
   : 'http://localhost:5050/api'
 const UPLOAD_URL = process.env.NODE_ENV === 'production' 
-  ? '/api/upload' 
+  ? 'https://portfolio-backend-nine-ruddy.vercel.app/api/upload' 
   : 'http://localhost:5050/api/upload'
 
 class ApiService {

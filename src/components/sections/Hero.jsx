@@ -206,7 +206,7 @@ const Hero = () => {
                     {/* Image Container */}
                     <div className="absolute inset-8 bg-black dark:bg-black light:bg-white rounded-full overflow-hidden">
                       <img 
-                        src="/src/assets/images/profile.png" 
+                        src="https://k4pmbxhxe5dpdb4l.public.blob.vercel-storage.com/profile.png" 
                         alt="Yusuf Şengöz" 
                         className="w-full h-full object-cover scale-125 hover:scale-130 transition-transform duration-700 filter contrast-110 brightness-105 saturate-110"
                       />
