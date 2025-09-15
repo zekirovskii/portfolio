@@ -1,0 +1,6 @@
+export { default as FadeIn } from './FadeIn'
+export { default as SlideIn } from './SlideIn'
+export { default as BounceIn } from './BounceIn'
+export { default as Parallax } from './Parallax'
+export { default as Reveal } from './Reveal'
+export { default as Typewriter } from './Typewriter'

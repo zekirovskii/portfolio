@@ -1,0 +1,199 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Dark Mode - Apple Style */
+body {
+  font-family: '-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+  color: #ffffff;
+  background: #000000;
+  min-height: 100vh;
+  transition: all 0.3s ease;
+}
+
+/* Light Mode - Apple Style */
+.light body {
+  background: #ffffff;
+  color: #1d1d1f;
+}
+
+/* Apple-style scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1c1c1e;
+}
+
+.light ::-webkit-scrollbar-track {
+  background: #f5f5f7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #48484a;
+  border-radius: 4px;
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: #d1d1d6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666666;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a6;
+}
+
+/* Apple-style selection */
+::selection {
+  background-color: #007aff;
+  color: white;
+}
+
+.light ::selection {
+  background-color: #007aff;
+  color: white;
+}
+
+/* Apple-style focus */
+*:focus {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+* {
+  transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Apple-style glow effect */
+.glow {
+  box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
+}
+
+.light .glow {
+  box-shadow: 0 0 20px rgba(0, 122, 255, 0.2);
+}
+
+/* Apple-style glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.light .glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Apple-style button hover effects */
+.apple-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.apple-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.apple-button:hover::before {
+  left: 100%;
+}
+
+/* Apple-style card hover effects */
+.apple-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.apple-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.light .apple-card:hover {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* Light mode specific overrides */
+.light .text-white {
+  color: #1d1d1f !important;
+}
+
+.light .text-gray-300 {
+  color: #6e6e73 !important;
+}
+
+.light .text-gray-400 {
+  color: #8e8e93 !important;
+}
+
+.light .bg-black {
+  background-color: #ffffff !important;
+}
+
+.light .bg-gray-900 {
+  background-color: #f5f5f7 !important;
+}
+
+.light .bg-gray-800 {
+  background-color: #e5e5e7 !important;
+}
+
+.light .border-gray-800 {
+  border-color: #e5e5e7 !important;
+}
+
+/* Meteor animation */
+@keyframes meteor {
+  0% {
+    transform: translateY(-100vh) translateX(-100px) rotate(45deg);
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) translateX(100px) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+.animate-meteor {
+  animation: meteor linear infinite;
+}
+
+/* Shimmer animation for ShineBorder */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

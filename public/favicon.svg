@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <!-- 3D Y harfi için gradient -->
+    <linearGradient id="textGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1f2937;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#111827;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#000000;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 3D gölge efekti -->
+    <filter id="shadow3D" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="2" dy="3" stdDeviation="2" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    
+    <!-- İç gölge -->
+    <filter id="innerShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur"/>
+      <feOffset in="blur" dx="1" dy="1" result="offset"/>
+      <feFlood flood-color="#000000" flood-opacity="0.3"/>
+      <feComposite in2="offset" operator="in"/>
+    </filter>
+  </defs>
+  
+  <!-- Beyaz arka plan -->
+  <rect width="32" height="32" fill="#ffffff" rx="8"/>
+  
+  <!-- İnce gri çerçeve -->
+  <rect x="1" y="1" width="30" height="30" fill="none" stroke="#e5e7eb" stroke-width="1" rx="7"/>
+  
+  <!-- 3D Y harfi - ana harf (büyütülmüş) -->
+  <text 
+    x="16" 
+    y="25" 
+    font-family="Georgia, 'Times New Roman', serif" 
+    font-size="24" 
+    font-weight="900" 
+    text-anchor="middle" 
+    fill="url(#textGradient)"
+    filter="url(#shadow3D)"
+    letter-spacing="-1px"
+  >
+    Y
+  </text>
+  
+  <!-- 3D Y harfi - alt gölge katmanı (büyütülmüş) -->
+  <text 
+    x="17" 
+    y="26" 
+    font-family="Georgia, 'Times New Roman', serif" 
+    font-size="24" 
+    font-weight="900" 
+    text-anchor="middle" 
+    fill="rgba(0,0,0,0.3)"
+    letter-spacing="-1px"
+  >
+    Y
+  </text>
+</svg>
