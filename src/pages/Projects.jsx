@@ -4,7 +4,7 @@ import { projects as staticProjects } from '../data/projects'
 import { useProjectContext } from '../context/ProjectContext'
 import { FadeIn, SlideIn } from '../components/animations'
 import { TextReveal } from '../components/magicui/TextReveal'
-import { getImageUrl } from '../utils/helpers'
+import { getImageUrl, getDisplayStatus, getStatusClasses } from '../utils/helpers'
 
 const Projects = () => {
   const { projects: contextProjects } = useProjectContext()
@@ -141,10 +141,8 @@ const Projects = () => {
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">{project.title}</h3>
-                        <span className={`px-4 py-2 rounded-full text-sm font-medium ${
-                          project.status === 'Completed' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                        }`}>
-                          {project.status}
+                        <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusClasses(project.status)}`}>
+                          {getDisplayStatus(project.status)}
                         </span>
                       </div>
                       <p className="text-gray-300 mb-6 leading-relaxed text-lg">{project.description}</p>

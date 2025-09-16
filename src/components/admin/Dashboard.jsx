@@ -6,7 +6,7 @@ import { ShineBorder } from '../magicui/ShineBorder'
 import { useProjectContext } from '../../context/ProjectContext'
 import ProjectList from './ProjectList'
 import ProjectForm from './ProjectForm'
-import { getImageUrl } from '../../utils/helpers'
+import { getImageUrl, getDisplayStatus, getStatusClasses } from '../../utils/helpers'
 
 const Dashboard = ({ onLogout }) => {
   const { projects, addProject, updateProject, deleteProject } = useProjectContext()
@@ -80,7 +80,7 @@ const Dashboard = ({ onLogout }) => {
     { 
       icon: FiSettings, 
       label: "Completed", 
-      value: projects.filter(p => p.status === 'Completed').length.toString(), 
+      value: projects.filter(p => getDisplayStatus(p.status) === 'Completed').length.toString(), 
       color: "from-purple-500 to-pink-500" 
     }
   ]
@@ -226,8 +226,7 @@ const Dashboard = ({ onLogout }) => {
               <h2 className="text-3xl font-bold text-white text-center mb-8">Recent Projects</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects
-                  .filter(project => project.source === 'admin') // Sadece admin tarafından eklenen projeler
-                  .slice(0, 6)
+                  .slice(0, 6) // İlk 6 projeyi al
                   .map((project, index) => (
                   <motion.div
                     key={`dashboard-project-${index}-${project._id || project.id || Date.now()}`}
@@ -239,12 +238,8 @@ const Dashboard = ({ onLogout }) => {
                       <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">{project.title}</h3>
                       <p className="text-gray-300 text-sm mb-4 line-clamp-2">{project.description}</p>
                       <div className="flex items-center justify-between">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                          project.status === 'Completed' 
-                            ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                            : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                        }`}>
-                          {project.status}
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusClasses(project.status)}`}>
+                          {getDisplayStatus(project.status)}
                         </span>
                         <div className="flex space-x-2">
                           <button

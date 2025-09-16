@@ -1,15 +1,11 @@
 // API Service for backend communication
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://portfolio-backend-nine-ruddy.vercel.app/api'
-  : 'http://localhost:5051/api'  // Port 5051'e güncelle
-const UPLOAD_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://portfolio-backend-nine-ruddy.vercel.app/api/upload'
-  : 'http://localhost:5051/api/upload'  // Port 5051'e güncelle
+  ? 'https://your-backend-url.vercel.app/api'
+  : '/api'  // Vite proxy kullan
 
 class ApiService {
   constructor() {
-    this.baseURL = API_BASE_URL
-    this.uploadURL = UPLOAD_URL
+    this.baseURL = '/api'
   }
 
   // Generic HTTP request method
@@ -33,11 +29,6 @@ class ApiService {
     try {
       const response = await fetch(url, config)
       
-      // 431 hatası için özel kontrol
-      if (response.status === 431) {
-        throw new Error('Request headers too large. Please try with smaller data.')
-      }
-      
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
@@ -46,12 +37,6 @@ class ApiService {
       return await response.json()
     } catch (error) {
       console.error('API Request failed:', error)
-      
-      // Bağlantı hataları için özel mesaj
-      if (error.name === 'TypeError' && error.message.includes('fetch')) {
-        throw new Error('Sunucuya bağlanılamıyor. Lütfen sunucunun çalıştığından emin olun.')
-      }
-      
       throw error
     }
   }
@@ -59,10 +44,6 @@ class ApiService {
   // Projects API
   async getProjects() {
     return this.request('/projects')
-  }
-
-  async getProject(id) {
-    return this.request(`/projects/${id}`)
   }
 
   async createProject(projectData) {
@@ -103,61 +84,34 @@ class ApiService {
     return this.request('/admin/profile')
   }
 
-  // Vercel Blob Upload API
+  // Upload API
   async uploadImage(file) {
     try {
-      // 1. Vercel Blob'a upload URL al
-      const response = await fetch('/api/upload', {
+      const formData = new FormData()
+      formData.append('image', file)
+
+      const token = localStorage.getItem('adminToken')
+      const response = await fetch('/api/upload/image', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          ...(localStorage.getItem('adminToken') && { 
-            Authorization: `Bearer ${localStorage.getItem('adminToken')}` 
-          })
+          ...(token && { Authorization: `Bearer ${token}` })
         },
-        body: JSON.stringify({
-          filename: file.name,
-          contentType: file.type
-        })
+        body: formData
       })
 
       if (!response.ok) {
-        throw new Error('Upload URL alınamadı')
+        throw new Error('Upload failed')
       }
 
-      const { url } = await response.json()
-      
-      // 2. Dosyayı Vercel Blob'a yükle
-      const uploadResponse = await fetch(url, {
-        method: 'PUT',
-        body: file,
-        headers: {
-          'Content-Type': file.type
-        }
-      })
-
-      if (!uploadResponse.ok) {
-        throw new Error('Dosya yüklenemedi')
-      }
-
-      // 3. Blob URL'ini döndür (query parametrelerini kaldır)
-      const blobUrl = url.split('?')[0]
-      return { url: blobUrl }
+      const result = await response.json()
+      return { url: result.data.url }
       
     } catch (error) {
-      console.error('Vercel Blob upload error:', error)
-      // Hata durumunda placeholder resim döndür
+      console.error('Upload error:', error)
       return { url: '/images/placeholder-project.jpg' }
     }
   }
-
-  async deleteImage(filename) {
-    return this.request(`/upload/${filename}`, {
-      method: 'DELETE'
-    })
-  }
 }
 
-// Create singleton instance
 const apiService = new ApiService()
 export default apiService

@@ -99,9 +99,10 @@ export const validateProjectTechnologies = (technologies) => {
 }
 
 export const validateProjectUrl = (url, fieldName = 'URL') => {
-  if (!url || url.trim() === '') return null // URL is optional
+  // URL boş veya null ise geçerli kabul et (opsiyonel alan)
+  if (!url || url.trim() === '' || url === null) return null
 
-  // More flexible URL validation that accepts various domains
+  // URL pattern kontrolü
   const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/
   
   if (!urlPattern.test(url)) {

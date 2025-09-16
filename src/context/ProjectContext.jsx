@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react'
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react'
 import apiService from '../services/apiService'
 
 // Context
@@ -16,10 +16,15 @@ const PROJECT_ACTIONS = {
 
 // Helper function to sort projects by creation date (newest first)
 const sortProjectsByDate = (projects) => {
+  // Güvenlik kontrolü ekle
+  if (!projects || !Array.isArray(projects)) {
+    return []
+  }
+  
   return [...projects].sort((a, b) => {
     const dateA = new Date(a.createdAt || a.updatedAt || 0)
     const dateB = new Date(b.createdAt || b.updatedAt || 0)
-    return dateB - dateA // Yeni tarihler önce gelsin
+    return dateB - dateA
   })
 }
 
@@ -42,7 +47,6 @@ const projectReducer = (state, action) => {
       }
     case PROJECT_ACTIONS.UPDATE_PROJECT:
       const updatedProjects = state.projects.map(project => {
-        // ID'leri karşılaştır (_id veya id)
         const projectId = project._id || project.id
         const updatedProjectId = action.payload._id || action.payload.id
         
@@ -93,17 +97,45 @@ const initialState = {
 // Provider component
 export const ProjectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(projectReducer, initialState)
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false) // Loading flag
 
   // Load projects from API on mount
   useEffect(() => {
     const loadProjects = async () => {
       try {
         dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-        const projects = await apiService.getProjects()
-        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: projects })
+        
+        const response = await apiService.getProjects()
+        
+        console.log('🔍 API Response:', response)
+        
+        // API response kontrolü
+        let projects = []
+        
+        if (response?.data?.projects && Array.isArray(response.data.projects)) {
+          projects = response.data.projects
+        } else if (response?.data && Array.isArray(response.data)) {
+          projects = response.data
+        } else if (Array.isArray(response)) {
+          projects = response
+        }
+        
+        console.log('📦 Processed projects:', projects)
+        
+        // Güvenlik kontrolü
+        const safeProjects = projects.map(project => ({
+          ...project,
+          technologies: Array.isArray(project.technologies) ? project.technologies : [],
+          status: project.status || 'Unknown',
+          title: project.title || 'Untitled',
+          description: project.description || 'No description'
+        }))
+        
+        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: safeProjects })
       } catch (error) {
         console.error('Error loading projects:', error)
         dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to load projects' })
+        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: [] })
       }
     }
 
@@ -114,9 +146,12 @@ export const ProjectProvider = ({ children }) => {
   const addProject = async (projectData) => {
     try {
       dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      const newProject = await apiService.createProject(projectData)
-      dispatch({ type: PROJECT_ACTIONS.ADD_PROJECT, payload: newProject })
-      return newProject
+      const response = await apiService.createProject(projectData)
+      
+      // Backend response formatına göre düzelt
+      const project = response?.data?.project || response?.data || response
+      dispatch({ type: PROJECT_ACTIONS.ADD_PROJECT, payload: project })
+      return project
     } catch (error) {
       console.error('Error adding project:', error)
       dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to add project' })
@@ -127,11 +162,11 @@ export const ProjectProvider = ({ children }) => {
   const updateProject = async (id, updatedProject) => {
     try {
       dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      const project = await apiService.updateProject(id, updatedProject)
+      const response = await apiService.updateProject(id, updatedProject)
       
-      // Sadece güncellenen projeyi değiştir, tüm listeyi değiştirme
+      // Backend response formatına göre düzelt
+      const project = response?.data?.project || response?.data || response
       dispatch({ type: PROJECT_ACTIONS.UPDATE_PROJECT, payload: project })
-      
       return project
     } catch (error) {
       console.error('Error updating project:', error)
@@ -148,8 +183,6 @@ export const ProjectProvider = ({ children }) => {
       
       dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
       await apiService.deleteProject(id)
-      
-      // Projeyi local state'ten kaldır
       dispatch({ type: PROJECT_ACTIONS.DELETE_PROJECT, payload: id })
       
     } catch (error) {
@@ -178,7 +211,19 @@ export const ProjectProvider = ({ children }) => {
   const refreshProjects = async () => {
     try {
       dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      const projects = await apiService.getProjects()
+      const response = await apiService.getProjects()
+      
+      // Backend response formatına göre düzelt
+      let projects = []
+      
+      if (response?.data?.projects && Array.isArray(response.data.projects)) {
+        projects = response.data.projects
+      } else if (response?.data && Array.isArray(response.data)) {
+        projects = response.data
+      } else if (Array.isArray(response)) {
+        projects = response
+      }
+      
       dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: projects })
     } catch (error) {
       console.error('Error refreshing projects:', error)

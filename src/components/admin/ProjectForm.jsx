@@ -28,11 +28,17 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
   useEffect(() => {
     if (project) {
       setFormData({
-        ...project,
-        technologies: project.technologies.join(', '),
+        title: project.title || '',
+        description: project.description || '',
+        technologies: Array.isArray(project.technologies) ? project.technologies.join(', ') : '',
+        category: project.category || 'Web Development',
+        status: project.status || 'Completed',
+        liveUrl: project.liveUrl || '',
+        githubUrl: project.githubUrl || '',
+        featured: project.featured || false,
+        year: project.year || new Date().getFullYear().toString(),
         image: null,
-        imagePreview: project.image || null,
-        // ID'yi ayrı tut, formData'ya karıştırma
+        imagePreview: project.image || null
       })
     } else {
       setFormData({
@@ -113,11 +119,20 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
 
     try {
       const projectData = {
-        ...formData,
+        title: formData.title,
+        description: formData.description,
         technologies: formData.technologies.split(',').map(tech => tech.trim()).filter(tech => tech),
-        // Düzenleme modunda resim yoksa mevcut resmi koru
+        category: formData.category,
+        status: formData.status, // Backend'de mapping yapılacak
+        liveUrl: formData.liveUrl || '',
+        githubUrl: formData.githubUrl || '',
+        featured: formData.featured,
+        year: formData.year,
+        // Backend'e gönderilecek resim URL'i
         image: formData.imagePreview || formData.image || project?.image || '/images/placeholder-project.jpg'
       }
+      
+      console.log('Sending project data:', projectData)
       
       // ID'leri temizle (backend'de yeni ID oluşturulacak veya mevcut ID kullanılacak)
       delete projectData.id
@@ -242,7 +257,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                 <input
                   type="text"
                   name="title"
-                  value={formData.title}
+                  value={formData.title || ''}
                   onChange={handleChange}
                   required
                   className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
@@ -263,7 +278,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                 </label>
                 <select
                   name="category"
-                  value={formData.category}
+                  value={formData.category || 'Web Development'}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -280,7 +295,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
               </label>
               <textarea
                 name="description"
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={handleChange}
                 rows={4}
                 required
@@ -304,7 +319,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
               <input
                 type="text"
                 name="technologies"
-                value={formData.technologies}
+                value={formData.technologies || ''}
                 onChange={handleChange}
                 required
                 className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
@@ -327,13 +342,14 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                 </label>
                 <select
                   name="status"
-                  value={formData.status}
+                  value={formData.status || 'Completed'}
                   onChange={handleChange}
                   className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {PROJECT_STATUSES.map(status => (
-                    <option key={status.value} value={status.value}>{status.label}</option>
-                  ))}
+                  <option value="Completed">Completed</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Draft">Draft</option>
+                  <option value="Archived">Archived</option>
                 </select>
               </div>
               <div>
@@ -343,7 +359,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                 <input
                   type="text"
                   name="year"
-                  value={formData.year}
+                  value={formData.year || ''}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
                     errors.year ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-blue-500'
@@ -367,7 +383,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                 <input
                   type="url"
                   name="liveUrl"
-                  value={formData.liveUrl}
+                  value={formData.liveUrl || ''}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
                     errors.liveUrl ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-blue-500'
@@ -388,7 +404,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                 <input
                   type="url"
                   name="githubUrl"
-                  value={formData.githubUrl}
+                  value={formData.githubUrl || ''}
                   onChange={handleChange}
                   className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 transition-colors ${
                     errors.githubUrl ? 'border-red-500 focus:ring-red-500' : 'border-gray-600 focus:ring-blue-500'
@@ -408,7 +424,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
               <input
                 type="checkbox"
                 name="featured"
-                checked={formData.featured}
+                checked={formData.featured || false}
                 onChange={handleChange}
                 className="w-4 h-4 text-blue-500 bg-gray-800 border-gray-600 rounded focus:ring-blue-500"
               />

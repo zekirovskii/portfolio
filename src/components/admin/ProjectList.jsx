@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { FiEdit, FiTrash2, FiEye, FiExternalLink, FiGithub, FiPlus } from 'react-icons/fi'
 import { MagicCard } from '../magicui/MagicCard'
 import { ShineBorder } from '../magicui/ShineBorder'
-import { getImageUrl } from "../../utils/helpers"
+import { getImageUrl, getDisplayStatus, getStatusClasses } from "../../utils/helpers"
 
 // Props'tan onDelete'yi al
 const ProjectList = ({ projects, onAdd, onEdit, onDelete }) => {
@@ -17,9 +17,8 @@ const ProjectList = ({ projects, onAdd, onEdit, onDelete }) => {
       return
     }
     
-    if (window.confirm('Are you sure you want to delete this project?')) {
-      onDelete(projectId)
-    }
+    // Sadece onDelete'yi çağır, confirm'i kaldır
+    onDelete(projectId)
   }
 
   return (
@@ -69,28 +68,33 @@ const ProjectList = ({ projects, onAdd, onEdit, onDelete }) => {
               <p className="text-gray-300 text-sm mb-4 line-clamp-3">{project.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-4">
-                {project.technologies.slice(0, 3).map((tech, idx) => (
-                  <span
-                    key={`${project.id}-tech-${idx}`}
-                    className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full"
-                  >
-                    {tech}
-                  </span>
-                ))}
-                {project.technologies.length > 3 && (
+                {/* Güvenlik kontrolü ekle */}
+                {project.technologies && Array.isArray(project.technologies) ? (
+                  <>
+                    {project.technologies.slice(0, 3).map((tech, idx) => (
+                      <span
+                        key={`${project.id}-tech-${idx}`}
+                        className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {project.technologies.length > 3 && (
+                      <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded-full">
+                        +{project.technologies.length - 3}
+                      </span>
+                    )}
+                  </>
+                ) : (
                   <span className="px-2 py-1 bg-gray-500/20 text-gray-400 text-xs rounded-full">
-                    +{project.technologies.length - 3}
+                    No technologies
                   </span>
                 )}
               </div>
 
               <div className="flex items-center justify-between">
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  project.status === 'Completed' 
-                    ? 'bg-green-500/20 text-green-400' 
-                    : 'bg-yellow-500/20 text-yellow-400'
-                }`}>
-                  {project.status}
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusClasses(project.status)}`}>
+                  {getDisplayStatus(project.status)}
                 </span>
                 
                 <div className="flex space-x-2">

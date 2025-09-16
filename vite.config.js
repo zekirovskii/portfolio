@@ -11,8 +11,9 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5051',  // Port 5051'e güncelle
+        target: 'http://localhost:5001',
         changeOrigin: true,
+        secure: false,
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
             console.log('proxy error', err);
@@ -24,6 +25,11 @@ export default defineConfig({
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
           });
         },
+      },
+      '/uploads': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+        secure: false
       }
     }
   },

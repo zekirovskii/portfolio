@@ -18,7 +18,7 @@ export const VALIDATION_RULES = {
     },
     URL: {
       PATTERN: /^https?:\/\/[^\s/$.?#].[^\s]*$/,
-      REQUIRED: false
+      REQUIRED: false // URL'ler opsiyonel
     },
     YEAR: {
       MIN: 2020,
@@ -89,12 +89,12 @@ export const PROJECT_CATEGORIES = [
   'DevOps'
 ]
 
-// Project statuses
+// Project statuses - Backend mapping'e uygun
 export const PROJECT_STATUSES = [
   { value: 'Completed', label: 'Completed' },
   { value: 'In Progress', label: 'In Progress' },
-  { value: 'Planning', label: 'Planning' },
-  { value: 'On Hold', label: 'On Hold' }
+  { value: 'Draft', label: 'Draft' },
+  { value: 'Archived', label: 'Archived' }
 ]
 
 // File upload constants

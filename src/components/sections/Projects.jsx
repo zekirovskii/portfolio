@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { FiExternalLink, FiGithub, FiStar } from 'react-icons/fi'
 import { useProjectContext } from '../../context/ProjectContext'
-import { getImageUrl } from "../../utils/helpers"
+import { getImageUrl, getDisplayStatus, getStatusClasses } from "../../utils/helpers"
 
 const Projects = () => {
   const { projects, loading, error } = useProjectContext()
@@ -96,12 +96,8 @@ const Projects = () => {
                     <h3 className="text-2xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">
                       {project.title}
                     </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      project.status === 'Completed' 
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                        : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                    }`}>
-                      {project.status || 'Completed'}
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusClasses(project.status)}`}>
+                      {getDisplayStatus(project.status)}
                     </span>
                   </div>
 

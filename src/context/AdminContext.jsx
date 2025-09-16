@@ -66,10 +66,10 @@ export const AdminProvider = ({ children }) => {
         const token = localStorage.getItem('adminToken')
         if (token) {
           // Verify token with API
-          const adminData = await apiService.getAdminProfile()
+          const response = await apiService.getAdminProfile()
           dispatch({
             type: ADMIN_ACTIONS.LOGIN,
-            payload: adminData
+            payload: response.data
           })
         }
       } catch (error) {
@@ -90,18 +90,40 @@ export const AdminProvider = ({ children }) => {
       const response = await apiService.adminLogin(credentials)
       
       // Store token
-      localStorage.setItem('adminToken', response.token)
-      localStorage.setItem('adminEmail', response.admin.email)
+      localStorage.setItem('adminToken', response.data.token)
+      localStorage.setItem('adminEmail', response.data.admin.email)
       
       dispatch({
         type: ADMIN_ACTIONS.LOGIN,
-        payload: response.admin
+        payload: response.data.admin
       })
       
       return response
     } catch (error) {
       console.error('Error during login:', error)
       dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: error.message || 'Login failed' })
+      throw error
+    }
+  }
+
+  const register = async (credentials) => {
+    try {
+      dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
+      const response = await apiService.adminRegister(credentials)
+      
+      // Store token
+      localStorage.setItem('adminToken', response.data.token)
+      localStorage.setItem('adminEmail', response.data.admin.email)
+      
+      dispatch({
+        type: ADMIN_ACTIONS.LOGIN,
+        payload: response.data.admin
+      })
+      
+      return response
+    } catch (error) {
+      console.error('Error during registration:', error)
+      dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: error.message || 'Registration failed' })
       throw error
     }
   }
@@ -132,6 +154,7 @@ export const AdminProvider = ({ children }) => {
   const value = {
     ...state,
     login,
+    register,
     logout,
     setLoading,
     setError
