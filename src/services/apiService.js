@@ -1,11 +1,9 @@
 // API Service for backend communication
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend-url.vercel.app/api'
-  : '/api'  // Vite proxy kullan
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-one-beige-70.vercel.app/api'
 
 class ApiService {
   constructor() {
-    this.baseURL = '/api'
+    this.baseURL = API_BASE_URL
   }
 
   // Generic HTTP request method
@@ -91,7 +89,7 @@ class ApiService {
       formData.append('image', file)
 
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('/api/upload/image', {
+      const response = await fetch(`${this.baseURL}/upload/image`, {
         method: 'POST',
         headers: {
           ...(token && { Authorization: `Bearer ${token}` })
