@@ -4,6 +4,16 @@ import { FiExternalLink, FiGithub } from 'react-icons/fi'
 import { useProjects } from '../../context/ProjectContext'
 import { getImageUrl } from '../../utils/helpers'
 
+// Status gösterimi için helper fonksiyon
+const getDisplayStatus = (status) => {
+  const statusMap = {
+    'published': 'Completed',
+    'draft': 'In Progress',
+    'archived': 'Archived'
+  }
+  return statusMap[status] || status
+}
+
 const Projects = () => {
   const { projects, loading, error, getFeaturedProjects } = useProjects()
 
@@ -35,7 +45,7 @@ const Projects = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Featured Projects
+            Featured <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Projects</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Here are some of my recent projects that showcase my skills and experience
@@ -58,6 +68,19 @@ const Projects = () => {
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                {/* Status Badge */}
+                <div className="absolute top-4 right-4">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    project.status === 'published' || project.status === 'Completed'
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                      : project.status === 'draft' || project.status === 'In Progress'
+                      ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                      : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                  }`}>
+                    {getDisplayStatus(project.status)}
+                  </span>
+                </div>
               </div>
 
               <div className="p-6">
@@ -85,7 +108,7 @@ const Projects = () => {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-medium"
                     >
                       <FiExternalLink className="w-4 h-4" />
                       Live Demo
@@ -96,10 +119,10 @@ const Projects = () => {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors font-medium"
                     >
                       <FiGithub className="w-4 h-4" />
-                      Code
+                      GitHub
                     </a>
                   )}
                 </div>
