@@ -79,10 +79,18 @@ const Dashboard = ({ onLogout }) => {
       if (editingProject) {
         // Edit existing project - MongoDB'den gelen projeler _id kullanır
         const projectId = editingProject._id || editingProject.id
-        await updateProject(projectId, projectData)
+        const result = await updateProject(projectId, projectData)
+        if (!result.success) {
+          console.error('Error updating project:', result.message)
+          return
+        }
       } else {
         // Add new project
-        await addProject(projectData)
+        const result = await addProject(projectData)
+        if (!result.success) {
+          console.error('Error adding project:', result.message)
+          return
+        }
       }
       
       // Form'u kapat ve state'i temizle
