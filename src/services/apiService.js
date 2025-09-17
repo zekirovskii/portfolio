@@ -21,7 +21,7 @@ class ApiService {
       },
       ...options,
       // Timeout'u 30 saniyeye çıkarın
-      signal: AbortSignal.timeout(30000) // 30 saniye timeout
+       // 30 saniye timeout
     }
 
     // Add auth token if available
