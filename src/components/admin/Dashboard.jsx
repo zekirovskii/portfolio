@@ -11,14 +11,47 @@ import ProjectForm from './ProjectForm'
 import { getImageUrl, getDisplayStatus, getStatusClasses } from '../../utils/helpers'
 
 const Dashboard = ({ onLogout }) => {
-  const { projects, addProject, updateProject, deleteProject } = useProjects()
+  const { projects, addProject, updateProject, deleteProject, loadProjects } = useProjectContext()
   const [showProjectForm, setShowProjectForm] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
 
-  const handleAddProject = () => {
-    setEditingProject(null)
-    setShowProjectForm(true)
+  // ✅ Admin login olduktan sonra projeleri yükle
+  useEffect(() => {
+    if (projects.length === 0) {
+      loadProjects()
+    }
+  }, [])
+
+  // ✅ addProject fonksiyonunu tanımla
+  const handleAddProject = async (projectData) => {
+    try {
+      const result = await addProject(projectData)
+      if (result.success) {
+        console.log('✅ Project added successfully')
+        setShowProjectForm(false)
+      } else {
+        console.error('❌ Error adding project:', result.message)
+      }
+    } catch (error) {
+      console.error('❌ Error adding project:', error)
+    }
+  }
+
+  // ✅ updateProject fonksiyonunu tanımla
+  const handleUpdateProject = async (id, projectData) => {
+    try {
+      const result = await updateProject(id, projectData)
+      if (result.success) {
+        console.log('✅ Project updated successfully')
+        setEditingProject(null)
+        setShowProjectForm(false)
+      } else {
+        console.error('❌ Error updating project:', result.message)
+      }
+    } catch (error) {
+      console.error('❌ Error updating project:', error)
+    }
   }
 
   const handleEditProject = (project) => {

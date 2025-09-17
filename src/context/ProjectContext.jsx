@@ -94,6 +94,18 @@ export const ProjectProvider = ({ children }) => {
     }
   }
 
+  // ✅ Normal user'lar için projeleri yükle
+  useEffect(() => {
+    // Admin sayfası değilse ve henüz yüklenmemişse yükle
+    const isAdminPage = window.location.pathname.includes('/admin')
+    
+    if (!isInitialized && !isAdminPage) {
+      console.log('📋 Loading projects for normal user...')
+      loadProjects()
+      setIsInitialized(true)
+    }
+  }, [isInitialized])
+
   // Add project
   const addProject = async (projectData) => {
     try {
