@@ -78,12 +78,15 @@ export const AdminProvider = ({ children }) => {
     dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
     try {
       const response = await apiService.adminLogin(email, password)
+      console.log('🔐 Login response:', response) // Debug için
+      
       if (response.success) {
         localStorage.setItem('adminToken', response.data.token)
         dispatch({ 
           type: ADMIN_ACTIONS.LOGIN_SUCCESS, 
-          payload: { user: response.data.user } 
+          payload: { user: response.data.admin } // admin field'ını kullan
         })
+        console.log('✅ Login successful, state updated') // Debug için
         return { success: true }
       } else {
         dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: response.message })

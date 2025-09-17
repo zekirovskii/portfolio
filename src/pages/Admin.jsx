@@ -6,6 +6,8 @@ import { useAdmin } from '../context/AdminContext'
 const Admin = () => {
   const { isAuthenticated, loading } = useAdmin()
 
+  console.log(' Admin state:', { isAuthenticated, loading }) // Debug için
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
@@ -25,7 +27,7 @@ const Admin = () => {
       {isAuthenticated ? (
         <AdminPanel />
       ) : (
-        <AdminLogin onLogin={() => {}} />
+        <AdminLogin />
       )}
     </motion.div>
   )

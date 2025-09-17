@@ -15,10 +15,13 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    console.log('🔐 Attempting login...') // Debug için
     const result = await login(formData.email, formData.password)
+    console.log('🔐 Login result:', result) // Debug için
+    
     if (result.success) {
-      // Login başarılı, AdminContext otomatik olarak state'i güncelleyecek
-      console.log('Login successful!')
+      console.log('✅ Login successful, redirecting...') // Debug için
+      // AdminContext otomatik olarak state'i güncelleyecek
     }
   }
 
