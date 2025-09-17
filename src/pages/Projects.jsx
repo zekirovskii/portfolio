@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { FiExternalLink, FiGithub } from 'react-icons/fi'
 import { useProjects } from '../context/ProjectContext'
 import { getImageUrl } from '../utils/helpers'
+import { TextReveal } from '../components/magicui/TextReveal'
 
 const Projects = () => {
   const { projects, loading, error } = useProjects()
@@ -38,10 +39,12 @@ const Projects = () => {
   const featuredProjects = projects.filter(project => project.featured)
 
   // Filtered featured projects based on search
-  const filteredFeaturedProjects = featuredProjects.filter(project =>
-    project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const filteredFeaturedProjects = searchTerm.length >= 3 
+    ? featuredProjects.filter(project =>
+        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : featuredProjects
 
   return (
     <motion.div
@@ -51,7 +54,7 @@ const Projects = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen pt-16 bg-black"
     >
-      {/* Hero Section - Aynen Kalacak */}
+      {/* Hero Section - Animasyonlu */}
       <section className="py-20 bg-gradient-to-br from-gray-900 via-black to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
@@ -65,12 +68,18 @@ const Projects = () => {
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <h1 className="text-6xl font-bold text-white mb-6">
-              My Projects
-            </h1>
-            <p className="text-xl text-gray-400 leading-relaxed">
+            <TextReveal
+              text="My Projects"
+              className="text-6xl font-bold text-white mb-6"
+            />
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="text-xl text-gray-400 leading-relaxed"
+            >
               Discover the projects I've built combining creativity and technology
-            </p>
+            </motion.p>
           </motion.div>
         </div>
       </section>
@@ -101,23 +110,9 @@ const Projects = () => {
         </div>
       </section>
 
-      {/* Featured Projects - Tutarlı Tasarım */}
+      {/* Featured Projects - Küçültülmüş Kartlar */}
       <section className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Featured Projects
-            </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Here are some of my recent projects that showcase my skills and experience
-            </p>
-          </motion.div>
-
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-8">
             <p className="text-gray-300 text-center text-lg">
               {filteredFeaturedProjects.length} project{filteredFeaturedProjects.length !== 1 ? 's' : ''} found
@@ -129,78 +124,87 @@ const Projects = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="space-y-6">
             {filteredFeaturedProjects.map((project, index) => (
               <motion.div
                 key={project._id || project.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 hover:border-purple-500/50 transition-all duration-300 group"
+                className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 hover:border-blue-500/50 transition-all duration-300 group max-w-6xl mx-auto"
               >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={getImageUrl(project.image)}
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      project.status === 'published' || project.status === 'Completed'
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                        : project.status === 'draft' || project.status === 'In Progress'
-                        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                        : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                    }`}>
-                      {getDisplayStatus(project.status)}
-                    </span>
-                  </div>
-                  
-                  <p className="text-gray-300 mb-4 line-clamp-3">
-                    {project.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies?.map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="px-3 py-1 bg-purple-500/20 text-purple-300 text-sm rounded-full border border-purple-500/30"
-                      >
-                        {tech}
+                <div className="flex flex-col lg:flex-row">
+                  {/* Resim - Sol taraf - Web projeleri için daha geniş */}
+                  <div className="relative overflow-hidden lg:w-2/5">
+                    <img
+                      src={getImageUrl(project.image)}
+                      alt={project.title}
+                      className="w-full h-48 lg:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    
+                    {/* Status Badge */}
+                    <div className="absolute top-3 right-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        project.status === 'published' || project.status === 'Completed'
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                          : project.status === 'draft' || project.status === 'In Progress'
+                          ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+                          : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                      }`}>
+                        {getDisplayStatus(project.status)}
                       </span>
-                    ))}
+                    </div>
                   </div>
 
-                  <div className="flex gap-4">
-                    {project.liveUrl && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-                      >
-                        <FiExternalLink className="w-4 h-4" />
-                        Live Demo
-                      </a>
-                    )}
-                    {project.githubUrl && (
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors font-medium"
-                      >
-                        <FiGithub className="w-4 h-4" />
-                        GitHub
-                      </a>
-                    )}
+                  {/* İçerik - Sağ taraf - Gri arka plan */}
+                  <div className="p-6 lg:w-3/5 flex flex-col justify-between bg-gray-900/50">
+                    <div>
+                      <h3 className="text-xl font-bold text-white transition-colors mb-3">
+                        {project.title}
+                      </h3>
+                      
+                      <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
+                        {project.description}
+                      </p>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.technologies?.map((tech, techIndex) => (
+                          <span
+                            key={techIndex}
+                            className="px-3 py-1 bg-gray-700/50 text-gray-300 text-sm rounded-full border border-gray-600/50"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Butonlar */}
+                    <div className="flex gap-3">
+                      {project.liveUrl && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-500/25 text-sm"
+                        >
+                          <FiExternalLink className="w-4 h-4" />
+                          Live Demo
+                        </a>
+                      )}
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all duration-300 font-semibold text-sm"
+                        >
+                          <FiGithub className="w-4 h-4" />
+                          GitHub
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </motion.div>
