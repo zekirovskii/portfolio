@@ -59,17 +59,17 @@ const initialState = {
 export const AdminProvider = ({ children }) => {
   const [state, dispatch] = useReducer(adminReducer, initialState)
 
-  // Check for existing session on mount
+  // Check for existing session on mount - SADECE token varsa
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = () => {
       try {
         const token = localStorage.getItem('adminToken')
         if (token) {
-          // Verify token with API
-          const response = await apiService.getAdminProfile()
+          // Token varsa sadece local state'i güncelle, API çağrısı yapma
+          const adminEmail = localStorage.getItem('adminEmail')
           dispatch({
             type: ADMIN_ACTIONS.LOGIN,
-            payload: response.data
+            payload: { email: adminEmail }
           })
         }
       } catch (error) {
@@ -87,15 +87,15 @@ export const AdminProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
-      const response = await apiService.adminLogin(credentials)
+      const response = await apiService.adminLogin(credentials.email, credentials.password)
       
       // Store token
       localStorage.setItem('adminToken', response.data.token)
-      localStorage.setItem('adminEmail', response.data.admin.email)
+      localStorage.setItem('adminEmail', response.data.user.email)
       
       dispatch({
         type: ADMIN_ACTIONS.LOGIN,
-        payload: response.data.admin
+        payload: response.data.user
       })
       
       return response

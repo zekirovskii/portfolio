@@ -90,16 +90,16 @@ const projectReducer = (state, action) => {
 // Initial state
 const initialState = {
   projects: [],
-  loading: true,
+  loading: true, // Başlangıçta true yap
   error: null
 }
 
 // Provider component
 export const ProjectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(projectReducer, initialState)
-  const [isLoadingProjects, setIsLoadingProjects] = useState(false) // Loading flag
+  const [isLoadingProjects, setIsLoadingProjects] = useState(false)
 
-  // Load projects from API on mount
+  // Load projects from API on mount - HER ZAMAN YÜKLE (Public projeler)
   useEffect(() => {
     const loadProjects = async () => {
       try {
@@ -120,7 +120,7 @@ export const ProjectProvider = ({ children }) => {
           projects = response
         }
         
-        console.log('📦 Processed projects:', projects)
+        console.log(' Processed projects:', projects)
         
         // Güvenlik kontrolü
         const safeProjects = projects.map(project => ({
@@ -139,6 +139,7 @@ export const ProjectProvider = ({ children }) => {
       }
     }
 
+    // Her zaman projeleri yükle (public projeler)
     loadProjects()
   }, [])
 
