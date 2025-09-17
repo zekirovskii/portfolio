@@ -80,13 +80,14 @@ export const AdminProvider = ({ children }) => {
       const response = await apiService.adminLogin(email, password)
       console.log('🔐 Login response:', response) // Debug için
       
-      if (response.success) {
+      // ✅ Backend'den gelen response formatına göre kontrol et
+      if (response.status === 'success') { // success yerine status === 'success'
         localStorage.setItem('adminToken', response.data.token)
         dispatch({ 
           type: ADMIN_ACTIONS.LOGIN_SUCCESS, 
-          payload: { user: response.data.admin } // admin field'ını kullan
+          payload: { user: response.data.admin }
         })
-        console.log('✅ Login successful, state updated') // Debug için
+        console.log('✅ Login successful, state updated')
         return { success: true }
       } else {
         dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: response.message })
