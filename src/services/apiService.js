@@ -120,25 +120,24 @@ class ApiService {
 
   // Admin API
   async adminLogin(email, password) {
-    try {
-      console.log('🔐 Attempting login with:', { email, password })
-      
-      // Email ve password'u doğru formatta gönderin
-      const result = await this.request('/admin/login', {
-        method: 'POST',
-        body: JSON.stringify({ 
-          email: email, 
-          password: password 
-        })
+  try {
+    console.log('�� Attempting login with:', { email, password })
+    
+    const result = await this.request('/admin/login', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        username: email, // email yerine username gönder
+        password: password 
       })
-      
-      console.log('🔐 Login result:', result)
-      return result
-    } catch (error) {
-      console.error('❌ Login failed:', error)
-      throw error
-    }
+    })
+    
+    console.log('🔐 Login result:', result)
+    return result
+  } catch (error) {
+    console.error('❌ Login failed:', error)
+    throw error
   }
+}
 
   async adminLogout() {
     return this.request('/admin/logout', {
