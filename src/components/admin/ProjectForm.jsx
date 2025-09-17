@@ -132,8 +132,6 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         image: formData.imagePreview || formData.image || project?.image || '/images/placeholder-project.jpg'
       }
       
-      console.log('Sending project data:', projectData)
-      
       // ID'leri temizle (backend'de yeni ID oluşturulacak veya mevcut ID kullanılacak)
       delete projectData.id
       delete projectData._id

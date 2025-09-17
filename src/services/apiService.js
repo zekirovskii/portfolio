@@ -4,14 +4,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-one-b
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL
-    console.log(' API Base URL:', this.baseURL)
   }
 
   // Generic HTTP request method with timeout
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`
-    console.log('📡 Making request to:', url)
-    console.log('📡 Request options:', options)
     
     const config = {
       method: 'GET',
@@ -31,15 +28,10 @@ class ApiService {
     }
 
     try {
-      console.log('⏳ Sending request...')
       const response = await fetch(url, config)
-      
-      console.log('📥 Response status:', response.status)
-      console.log('📥 Response ok:', response.ok)
       
       if (!response.ok) {
         const errorText = await response.text()
-        console.error('❌ Response error text:', errorText)
         
         let errorData
         try {
@@ -52,14 +44,9 @@ class ApiService {
       }
 
       const data = await response.json()
-      console.log('✅ Response data:', data)
       return data
       
     } catch (error) {
-      console.error('❌ Request failed:', error)
-      console.error('❌ Error name:', error.name)
-      console.error('❌ Error message:', error.message)
-      
       // Network error handling
       if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
         throw new Error('Network error: Backend server is not reachable. Please check if the backend is running.')
@@ -76,12 +63,9 @@ class ApiService {
   // Projects API
   async getProjects() {
     try {
-      console.log('📋 Fetching projects...')
       const result = await this.request('/projects')
-      console.log(' Projects result:', result)
       return result
     } catch (error) {
-      console.error('❌ Failed to fetch projects:', error)
       // Fallback: boş array döndür
       return { success: true, data: [] }
     }
@@ -89,18 +73,13 @@ class ApiService {
 
   async createProject(projectData) {
     try {
-      console.log('➕ Creating project...')
-      console.log('➕ Project data:', JSON.stringify(projectData, null, 2))
-      
       const result = await this.request('/projects', {
         method: 'POST',
         body: JSON.stringify(projectData)
       })
       
-      console.log('➕ Project created:', result)
       return result
     } catch (error) {
-      console.error('❌ Failed to create project:', error)
       throw error
     }
   }
@@ -121,8 +100,6 @@ class ApiService {
   // Admin API
   async adminLogin(email, password) {
   try {
-    console.log('�� Attempting login with:', { email, password })
-    
     const result = await this.request('/admin/login', {
       method: 'POST',
       body: JSON.stringify({ 
@@ -131,10 +108,8 @@ class ApiService {
       })
     })
     
-    console.log('🔐 Login result:', result)
     return result
   } catch (error) {
-    console.error('❌ Login failed:', error)
     throw error
   }
 }
@@ -172,7 +147,6 @@ class ApiService {
       return { url: result.data.url }
       
     } catch (error) {
-      console.error('Upload error:', error)
       return { url: '/images/placeholder-project.jpg' }
     }
   }

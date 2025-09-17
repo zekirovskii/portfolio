@@ -83,12 +83,10 @@ export const ProjectProvider = ({ children }) => {
     dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
     try {
       const response = await apiService.getProjects()
-      console.log('📋 Backend response:', response) // Debug için
       
       if (response.status === 'success') {
         // ✅ Backend'den gelen format: response.data.projects
         const projects = response.data.projects || []
-        console.log('📋 Projects loaded:', projects.length, 'projects') // Debug için
         dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: projects })
       } else {
         dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: response.message })
@@ -105,7 +103,6 @@ export const ProjectProvider = ({ children }) => {
     const isAdminPage = window.location.pathname.includes('/admin')
     
     if (!isInitialized && !isAdminPage) {
-      console.log('📋 Loading projects for normal user...')
       loadProjects()
       setIsInitialized(true)
     }
@@ -114,8 +111,10 @@ export const ProjectProvider = ({ children }) => {
   // Add project
   const addProject = async (projectData) => {
     try {
-      const response = await apiService.addProject(projectData)
-      if (response.success) {
+      const response = await apiService.createProject(projectData)
+      
+      // Backend'den gelen format: {status: 'success', message: '...', data: {...}}
+      if (response.status === 'success') {
         dispatch({ type: PROJECT_ACTIONS.ADD_PROJECT, payload: response.data })
         return { success: true, data: response.data }
       } else {
@@ -131,7 +130,9 @@ export const ProjectProvider = ({ children }) => {
   const updateProject = async (id, projectData) => {
     try {
       const response = await apiService.updateProject(id, projectData)
-      if (response.success) {
+      
+      // Backend'den gelen format: {status: 'success', message: '...', data: {...}}
+      if (response.status === 'success') {
         dispatch({ type: PROJECT_ACTIONS.UPDATE_PROJECT, payload: response.data })
         return { success: true, data: response.data }
       } else {
@@ -147,7 +148,9 @@ export const ProjectProvider = ({ children }) => {
   const deleteProject = async (id) => {
     try {
       const response = await apiService.deleteProject(id)
-      if (response.success) {
+      
+      // Backend'den gelen format: {status: 'success', message: '...', data: {...}}
+      if (response.status === 'success') {
         dispatch({ type: PROJECT_ACTIONS.DELETE_PROJECT, payload: id })
         return { success: true }
       } else {

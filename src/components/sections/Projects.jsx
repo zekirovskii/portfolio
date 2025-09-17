@@ -34,7 +34,7 @@ const Projects = () => {
     )
   }
 
-  const featuredProjects = getFeaturedProjects()
+  const featuredProjects = getFeaturedProjects().slice(0, 3) // En fazla 3 proje
 
   return (
     <section id="projects" className="py-10 bg-black">

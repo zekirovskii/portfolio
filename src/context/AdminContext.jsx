@@ -75,28 +75,22 @@ export const AdminProvider = ({ children }) => {
 
   // Login function
   const login = async (email, password) => {
-    dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
     try {
       const response = await apiService.adminLogin(email, password)
-      console.log('🔐 Login response:', response) // Debug için
       
       // ✅ Backend'den gelen response formatına göre kontrol et
-      if (response.status === 'success') { // success yerine status === 'success'
+      if (response.status === 'success') {
         localStorage.setItem('adminToken', response.data.token)
-        dispatch({ 
-          type: ADMIN_ACTIONS.LOGIN_SUCCESS, 
+        dispatch({
+          type: 'LOGIN_SUCCESS',
           payload: { user: response.data.admin }
         })
-        console.log('✅ Login successful, state updated')
         return { success: true }
       } else {
-        dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: response.message })
         return { success: false, message: response.message }
       }
     } catch (error) {
-      console.error('Login error:', error)
-      dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: 'Login failed' })
-      return { success: false, message: 'Login failed' }
+      return { success: false, message: error.message }
     }
   }
 

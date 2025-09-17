@@ -11,6 +11,7 @@ import { getImageUrl, getDisplayStatus, getStatusClasses } from '../../utils/hel
 
 const Dashboard = ({ onLogout }) => {
   const { projects, addProject, updateProject, deleteProject, loadProjects } = useProjects()
+  
   const [showProjectForm, setShowProjectForm] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
@@ -27,7 +28,6 @@ const Dashboard = ({ onLogout }) => {
     try {
       const result = await addProject(projectData)
       if (result.success) {
-        console.log('✅ Project added successfully')
         setShowProjectForm(false)
       } else {
         console.error('❌ Error adding project:', result.message)
@@ -42,7 +42,6 @@ const Dashboard = ({ onLogout }) => {
     try {
       const result = await updateProject(id, projectData)
       if (result.success) {
-        console.log('✅ Project updated successfully')
         setEditingProject(null)
         setShowProjectForm(false)
       } else {

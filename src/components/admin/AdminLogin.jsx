@@ -10,18 +10,27 @@ const AdminLogin = () => {
     password: ''
   })
   const [showPassword, setShowPassword] = useState(false)
-  const { login, loading, error } = useAdmin()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const { login, loading } = useAdmin()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setIsSubmitting(true)
+    setError('')
     
-    console.log('🔐 Attempting login...') // Debug için
-    const result = await login(formData.email, formData.password)
-    console.log('🔐 Login result:', result) // Debug için
-    
-    if (result.success) {
-      console.log('✅ Login successful, redirecting...') // Debug için
-      // AdminContext otomatik olarak state'i güncelleyecek
+    try {
+      const result = await login(formData.email, formData.password)
+      
+      if (result.success) {
+        // AdminContext otomatik olarak state'i güncelleyecek
+      } else {
+        setError(result.message || 'Login failed')
+      }
+    } catch (error) {
+      setError('An error occurred during login')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -102,12 +111,12 @@ const AdminLogin = () => {
 
             <motion.button
               type="submit"
-              disabled={loading}
+              disabled={isSubmitting}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {isSubmitting ? 'Signing in...' : 'Sign In'}
             </motion.button>
           </form>
         </MagicCard>
