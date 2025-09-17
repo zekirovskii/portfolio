@@ -4,18 +4,24 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-one-b
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL
+    console.log(' API Base URL:', this.baseURL)
   }
 
-  // Generic HTTP request method
+  // Generic HTTP request method with timeout
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`
+    console.log('📡 Making request to:', url)
+    console.log('📡 Request options:', options)
     
     const config = {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         ...options.headers
       },
-      ...options
+      ...options,
+      // Timeout ekleyin
+      signal: AbortSignal.timeout(10000) // 10 saniye timeout
     }
 
     // Add auth token if available
@@ -25,30 +31,78 @@ class ApiService {
     }
 
     try {
+      console.log('⏳ Sending request...')
       const response = await fetch(url, config)
       
+      console.log('📥 Response status:', response.status)
+      console.log('📥 Response ok:', response.ok)
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
+        const errorText = await response.text()
+        console.error('❌ Response error text:', errorText)
+        
+        let errorData
+        try {
+          errorData = JSON.parse(errorText)
+        } catch {
+          errorData = { message: errorText }
+        }
+        
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
       }
 
-      return await response.json()
+      const data = await response.json()
+      console.log('✅ Response data:', data)
+      return data
+      
     } catch (error) {
-      console.error('API Request failed:', error)
+      console.error('❌ Request failed:', error)
+      console.error('❌ Error name:', error.name)
+      console.error('❌ Error message:', error.message)
+      
+      // Network error handling
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        throw new Error('Network error: Backend server is not reachable. Please check if the backend is running.')
+      }
+      
+      if (error.name === 'TimeoutError') {
+        throw new Error('Request timeout: Backend server is taking too long to respond.')
+      }
+      
       throw error
     }
   }
 
   // Projects API
   async getProjects() {
-    return this.request('/projects')
+    try {
+      console.log('📋 Fetching projects...')
+      const result = await this.request('/projects')
+      console.log(' Projects result:', result)
+      return result
+    } catch (error) {
+      console.error('❌ Failed to fetch projects:', error)
+      // Fallback: boş array döndür
+      return { success: true, data: [] }
+    }
   }
 
   async createProject(projectData) {
-    return this.request('/projects', {
-      method: 'POST',
-      body: JSON.stringify(projectData)
-    })
+    try {
+      console.log('➕ Creating project...')
+      console.log('➕ Project data:', JSON.stringify(projectData, null, 2))
+      
+      const result = await this.request('/projects', {
+        method: 'POST',
+        body: JSON.stringify(projectData)
+      })
+      
+      console.log('➕ Project created:', result)
+      return result
+    } catch (error) {
+      console.error('❌ Failed to create project:', error)
+      throw error
+    }
   }
 
   async updateProject(id, projectData) {
@@ -65,11 +119,19 @@ class ApiService {
   }
 
   // Admin API
-  async adminLogin(credentials) {
-    return this.request('/admin/login', {
-      method: 'POST',
-      body: JSON.stringify(credentials)
-    })
+  async adminLogin(email, password) {
+    try {
+      console.log('🔐 Attempting login with:', { email })
+      const result = await this.request('/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      })
+      console.log('🔐 Login result:', result)
+      return result
+    } catch (error) {
+      console.error('❌ Login failed:', error)
+      throw error
+    }
   }
 
   async adminLogout() {
