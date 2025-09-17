@@ -5,13 +5,12 @@ import { MagicCard } from '../magicui/MagicCard'
 import { ShineBorder } from '../magicui/ShineBorder'
 import { useProjects } from '../../context/ProjectContext'
 import { useAdmin } from '../../context/AdminContext'
-import { useProjectContext } from '../../context/ProjectContext'
 import ProjectList from './ProjectList'
 import ProjectForm from './ProjectForm'
 import { getImageUrl, getDisplayStatus, getStatusClasses } from '../../utils/helpers'
 
 const Dashboard = ({ onLogout }) => {
-  const { projects, addProject, updateProject, deleteProject, loadProjects } = useProjectContext()
+  const { projects, addProject, updateProject, deleteProject, loadProjects } = useProjects()
   const [showProjectForm, setShowProjectForm] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')
