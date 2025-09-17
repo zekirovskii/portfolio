@@ -6,31 +6,24 @@ const AdminContext = createContext()
 
 // Action types
 const ADMIN_ACTIONS = {
-  LOGIN: 'LOGIN',
-  LOGOUT: 'LOGOUT',
   SET_LOADING: 'SET_LOADING',
-  SET_ERROR: 'SET_ERROR'
+  SET_ERROR: 'SET_ERROR',
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  LOGOUT: 'LOGOUT',
+  SET_AUTHENTICATED: 'SET_AUTHENTICATED'
+}
+
+// Initial state
+const initialState = {
+  isAuthenticated: false,
+  loading: false,
+  error: null,
+  user: null
 }
 
 // Reducer
 const adminReducer = (state, action) => {
   switch (action.type) {
-    case ADMIN_ACTIONS.LOGIN:
-      return {
-        ...state,
-        isAuthenticated: true,
-        admin: action.payload,
-        loading: false,
-        error: null
-      }
-    case ADMIN_ACTIONS.LOGOUT:
-      return {
-        ...state,
-        isAuthenticated: false,
-        admin: null,
-        loading: false,
-        error: null
-      }
     case ADMIN_ACTIONS.SET_LOADING:
       return {
         ...state,
@@ -42,122 +35,77 @@ const adminReducer = (state, action) => {
         error: action.payload,
         loading: false
       }
+    case ADMIN_ACTIONS.LOGIN_SUCCESS:
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.user,
+        loading: false,
+        error: null
+      }
+    case ADMIN_ACTIONS.LOGOUT:
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        loading: false,
+        error: null
+      }
+    case ADMIN_ACTIONS.SET_AUTHENTICATED:
+      return {
+        ...state,
+        isAuthenticated: action.payload
+      }
     default:
       return state
   }
-}
-
-// Initial state
-const initialState = {
-  isAuthenticated: false,
-  admin: null,
-  loading: false,
-  error: null
 }
 
 // Provider component
 export const AdminProvider = ({ children }) => {
   const [state, dispatch] = useReducer(adminReducer, initialState)
 
-  // Check for existing session on mount - SADECE token varsa
+  // Check if user is already logged in on mount
   useEffect(() => {
-    const checkAuth = () => {
-      try {
-        const token = localStorage.getItem('adminToken')
-        if (token) {
-          // Token varsa sadece local state'i güncelle, API çağrısı yapma
-          const adminEmail = localStorage.getItem('adminEmail')
-          dispatch({
-            type: ADMIN_ACTIONS.LOGIN,
-            payload: { email: adminEmail }
-          })
-        }
-      } catch (error) {
-        console.error('Error checking auth:', error)
-        // Clear invalid token
-        localStorage.removeItem('adminToken')
-        localStorage.removeItem('adminEmail')
-      }
+    const token = localStorage.getItem('adminToken')
+    if (token) {
+      dispatch({ type: ADMIN_ACTIONS.SET_AUTHENTICATED, payload: true })
     }
-
-    checkAuth()
   }, [])
 
-  // Actions
-  const login = async (credentials) => {
+  // Login function
+  const login = async (email, password) => {
+    dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
     try {
-      dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
-      const response = await apiService.adminLogin(credentials.email, credentials.password)
-      
-      // Store token
-      localStorage.setItem('adminToken', response.data.token)
-      localStorage.setItem('adminEmail', response.data.user.email)
-      
-      dispatch({
-        type: ADMIN_ACTIONS.LOGIN,
-        payload: response.data.user
-      })
-      
-      return response
+      const response = await apiService.adminLogin(email, password)
+      if (response.success) {
+        localStorage.setItem('adminToken', response.data.token)
+        dispatch({ 
+          type: ADMIN_ACTIONS.LOGIN_SUCCESS, 
+          payload: { user: response.data.user } 
+        })
+        return { success: true }
+      } else {
+        dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: response.message })
+        return { success: false, message: response.message }
+      }
     } catch (error) {
-      console.error('Error during login:', error)
-      dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: error.message || 'Login failed' })
-      throw error
+      console.error('Login error:', error)
+      dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: 'Login failed' })
+      return { success: false, message: 'Login failed' }
     }
   }
 
-  const register = async (credentials) => {
-    try {
-      dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: true })
-      const response = await apiService.adminRegister(credentials)
-      
-      // Store token
-      localStorage.setItem('adminToken', response.data.token)
-      localStorage.setItem('adminEmail', response.data.admin.email)
-      
-      dispatch({
-        type: ADMIN_ACTIONS.LOGIN,
-        payload: response.data.admin
-      })
-      
-      return response
-    } catch (error) {
-      console.error('Error during registration:', error)
-      dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: error.message || 'Registration failed' })
-      throw error
-    }
-  }
-
-  const logout = async () => {
-    try {
-      // Call API logout
-      await apiService.adminLogout()
-    } catch (error) {
-      console.error('Error during logout:', error)
-    } finally {
-      // Clear local storage
-      localStorage.removeItem('adminToken')
-      localStorage.removeItem('adminEmail')
-      
-      dispatch({ type: ADMIN_ACTIONS.LOGOUT })
-    }
-  }
-
-  const setLoading = (loading) => {
-    dispatch({ type: ADMIN_ACTIONS.SET_LOADING, payload: loading })
-  }
-
-  const setError = (error) => {
-    dispatch({ type: ADMIN_ACTIONS.SET_ERROR, payload: error })
+  // Logout function
+  const logout = () => {
+    localStorage.removeItem('adminToken')
+    dispatch({ type: ADMIN_ACTIONS.LOGOUT })
   }
 
   const value = {
     ...state,
     login,
-    register,
-    logout,
-    setLoading,
-    setError
+    logout
   }
 
   return (
@@ -167,11 +115,11 @@ export const AdminProvider = ({ children }) => {
   )
 }
 
-// Custom hook
-export const useAdminContext = () => {
+// Hook to use admin context
+export const useAdmin = () => {
   const context = useContext(AdminContext)
   if (!context) {
-    throw new Error('useAdminContext must be used within an AdminProvider')
+    throw new Error('useAdmin must be used within an AdminProvider')
   }
   return context
 }

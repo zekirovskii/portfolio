@@ -16,16 +16,14 @@ const PROJECT_ACTIONS = {
 
 // Helper function to sort projects by creation date (newest first)
 const sortProjectsByDate = (projects) => {
-  // Güvenlik kontrolü ekle
-  if (!projects || !Array.isArray(projects)) {
-    return []
-  }
-  
-  return [...projects].sort((a, b) => {
-    const dateA = new Date(a.createdAt || a.updatedAt || 0)
-    const dateB = new Date(b.createdAt || b.updatedAt || 0)
-    return dateB - dateA
-  })
+  return [...projects].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+// Initial state
+const initialState = {
+  projects: [],
+  loading: false,
+  error: null
 }
 
 // Reducer
@@ -34,42 +32,28 @@ const projectReducer = (state, action) => {
     case PROJECT_ACTIONS.SET_PROJECTS:
       return {
         ...state,
-        projects: sortProjectsByDate(action.payload),
+        projects: action.payload,
         loading: false,
         error: null
       }
     case PROJECT_ACTIONS.ADD_PROJECT:
       return {
         ...state,
-        projects: sortProjectsByDate([...state.projects, action.payload]),
-        loading: false,
-        error: null
+        projects: sortProjectsByDate([...state.projects, action.payload])
       }
     case PROJECT_ACTIONS.UPDATE_PROJECT:
-      const updatedProjects = state.projects.map(project => {
-        const projectId = project._id || project.id
-        const updatedProjectId = action.payload._id || action.payload.id
-        
-        if (projectId === updatedProjectId) {
-          return action.payload
-        }
-        return project
-      })
       return {
         ...state,
-        projects: sortProjectsByDate(updatedProjects),
-        loading: false,
-        error: null
+        projects: sortProjectsByDate(
+          state.projects.map(project =>
+            project._id === action.payload._id ? action.payload : project
+          )
+        )
       }
     case PROJECT_ACTIONS.DELETE_PROJECT:
       return {
         ...state,
-        projects: state.projects.filter(project => {
-          const projectId = project._id || project.id
-          return projectId !== action.payload
-        }),
-        loading: false,
-        error: null
+        projects: state.projects.filter(project => project._id !== action.payload)
       }
     case PROJECT_ACTIONS.SET_LOADING:
       return {
@@ -87,160 +71,103 @@ const projectReducer = (state, action) => {
   }
 }
 
-// Initial state
-const initialState = {
-  projects: [],
-  loading: true, // Başlangıçta true yap
-  error: null
-}
-
 // Provider component
 export const ProjectProvider = ({ children }) => {
   const [state, dispatch] = useReducer(projectReducer, initialState)
-  const [isLoadingProjects, setIsLoadingProjects] = useState(false)
+  const [isInitialized, setIsInitialized] = useState(false)
 
-  // Load projects from API on mount - HER ZAMAN YÜKLE (Public projeler)
-  useEffect(() => {
-    const loadProjects = async () => {
-      try {
-        dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-        
-        const response = await apiService.getProjects()
-        
-        console.log('🔍 API Response:', response)
-        
-        // API response kontrolü
-        let projects = []
-        
-        if (response?.data?.projects && Array.isArray(response.data.projects)) {
-          projects = response.data.projects
-        } else if (response?.data && Array.isArray(response.data)) {
-          projects = response.data
-        } else if (Array.isArray(response)) {
-          projects = response
-        }
-        
-        console.log(' Processed projects:', projects)
-        
-        // Güvenlik kontrolü
-        const safeProjects = projects.map(project => ({
-          ...project,
-          technologies: Array.isArray(project.technologies) ? project.technologies : [],
-          status: project.status || 'Unknown',
-          title: project.title || 'Untitled',
-          description: project.description || 'No description'
-        }))
-        
-        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: safeProjects })
-      } catch (error) {
-        console.error('Error loading projects:', error)
-        dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to load projects' })
-        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: [] })
+  // Load projects only when needed
+  const loadProjects = async () => {
+    if (state.projects.length > 0) return // Already loaded
+    
+    dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
+    try {
+      const response = await apiService.getProjects()
+      if (response.success) {
+        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: response.data })
+      } else {
+        dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: response.message })
       }
+    } catch (error) {
+      console.error('Error loading projects:', error)
+      dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to load projects' })
     }
+  }
 
-    // Her zaman projeleri yükle (public projeler)
-    loadProjects()
-  }, [])
+  // Load projects on mount only if not already loaded
+  useEffect(() => {
+    if (!isInitialized && state.projects.length === 0) {
+      loadProjects()
+      setIsInitialized(true)
+    }
+  }, [isInitialized])
 
-  // Actions
+  // Add project
   const addProject = async (projectData) => {
     try {
-      dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      const response = await apiService.createProject(projectData)
-      
-      // Backend response formatına göre düzelt
-      const project = response?.data?.project || response?.data || response
-      dispatch({ type: PROJECT_ACTIONS.ADD_PROJECT, payload: project })
-      return project
+      const response = await apiService.addProject(projectData)
+      if (response.success) {
+        dispatch({ type: PROJECT_ACTIONS.ADD_PROJECT, payload: response.data })
+        return { success: true, data: response.data }
+      } else {
+        return { success: false, message: response.message }
+      }
     } catch (error) {
       console.error('Error adding project:', error)
-      dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to add project' })
-      throw error
+      return { success: false, message: 'Failed to add project' }
     }
   }
 
-  const updateProject = async (id, updatedProject) => {
+  // Update project
+  const updateProject = async (id, projectData) => {
     try {
-      dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      const response = await apiService.updateProject(id, updatedProject)
-      
-      // Backend response formatına göre düzelt
-      const project = response?.data?.project || response?.data || response
-      dispatch({ type: PROJECT_ACTIONS.UPDATE_PROJECT, payload: project })
-      return project
+      const response = await apiService.updateProject(id, projectData)
+      if (response.success) {
+        dispatch({ type: PROJECT_ACTIONS.UPDATE_PROJECT, payload: response.data })
+        return { success: true, data: response.data }
+      } else {
+        return { success: false, message: response.message }
+      }
     } catch (error) {
       console.error('Error updating project:', error)
-      dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to update project' })
-      throw error
+      return { success: false, message: 'Failed to update project' }
     }
   }
 
+  // Delete project
   const deleteProject = async (id) => {
     try {
-      if (!id || id === 'undefined' || id === 'null' || id === '') {
-        throw new Error(`Project ID is required. Received: ${id} (type: ${typeof id})`)
+      const response = await apiService.deleteProject(id)
+      if (response.success) {
+        dispatch({ type: PROJECT_ACTIONS.DELETE_PROJECT, payload: id })
+        return { success: true }
+      } else {
+        return { success: false, message: response.message }
       }
-      
-      dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      await apiService.deleteProject(id)
-      dispatch({ type: PROJECT_ACTIONS.DELETE_PROJECT, payload: id })
-      
     } catch (error) {
       console.error('Error deleting project:', error)
-      dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to delete project' })
-      throw error
+      return { success: false, message: 'Failed to delete project' }
     }
   }
 
-  const getProjectById = (id) => {
-    return state.projects.find(project => project.id === id)
-  }
-
+  // Get featured projects
   const getFeaturedProjects = () => {
-    return state.projects.filter(project => project.featured)
+    return state.projects.filter(project => project.featured === true)
   }
 
-  const getProjectsByTechnology = (technology) => {
-    return state.projects.filter(project =>
-      project.technologies.some(tech =>
-        tech.toLowerCase().includes(technology.toLowerCase())
-      )
-    )
-  }
-
-  const refreshProjects = async () => {
-    try {
-      dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
-      const response = await apiService.getProjects()
-      
-      // Backend response formatına göre düzelt
-      let projects = []
-      
-      if (response?.data?.projects && Array.isArray(response.data.projects)) {
-        projects = response.data.projects
-      } else if (response?.data && Array.isArray(response.data)) {
-        projects = response.data
-      } else if (Array.isArray(response)) {
-        projects = response
-      }
-      
-      dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: projects })
-    } catch (error) {
-      console.error('Error refreshing projects:', error)
-      dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: 'Failed to refresh projects' })
-    }
+  // Get projects by category
+  const getProjectsByCategory = (category) => {
+    return state.projects.filter(project => project.category === category)
   }
 
   const value = {
     ...state,
+    loadProjects,
     addProject,
     updateProject,
     deleteProject,
-    getProjectById,
     getFeaturedProjects,
-    getProjectsByTechnology,
-    refreshProjects
+    getProjectsByCategory
   }
 
   return (
@@ -250,13 +177,14 @@ export const ProjectProvider = ({ children }) => {
   )
 }
 
-// Custom hook
-export const useProjectContext = () => {
+// Hook to use project context
+export const useProjects = () => {
   const context = useContext(ProjectContext)
   if (!context) {
-    throw new Error('useProjectContext must be used within a ProjectProvider')
+    throw new Error('useProjects must be used within a ProjectProvider')
   }
   return context
 }
 
 export default ProjectContext
+

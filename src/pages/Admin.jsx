@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion'
 import AdminLogin from '../components/admin/AdminLogin'
 import AdminPanel from '../components/admin/AdminPanel'
-import { useAdminContext } from '../context/AdminContext'
+import { useAdmin } from '../context/AdminContext'
 
 const Admin = () => {
-  const { isAuthenticated, loading } = useAdminContext()
+  const { isAuthenticated, loading } = useAdmin()
 
   if (loading) {
     return (
@@ -25,7 +25,7 @@ const Admin = () => {
       {isAuthenticated ? (
         <AdminPanel />
       ) : (
-        <AdminLogin />
+        <AdminLogin onLogin={() => {}} />
       )}
     </motion.div>
   )
