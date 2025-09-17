@@ -94,14 +94,6 @@ export const ProjectProvider = ({ children }) => {
     }
   }
 
-  // Load projects on mount only if not already loaded
-  useEffect(() => {
-    if (!isInitialized && state.projects.length === 0) {
-      loadProjects()
-      setIsInitialized(true)
-    }
-  }, [isInitialized])
-
   // Add project
   const addProject = async (projectData) => {
     try {
