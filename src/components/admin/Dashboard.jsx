@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { FiTrendingUp, FiUsers, FiSettings, FiPlus, FiEdit, FiTrash2, FiEye } from 'react-icons/fi'
 import { MagicCard } from '../magicui/MagicCard'
 import { ShineBorder } from '../magicui/ShineBorder'
+import { useProjects } from '../../context/ProjectContext'
+import { useAdmin } from '../../context/AdminContext'
 import { useProjectContext } from '../../context/ProjectContext'
 import ProjectList from './ProjectList'
 import ProjectForm from './ProjectForm'
 import { getImageUrl, getDisplayStatus, getStatusClasses } from '../../utils/helpers'
 
 const Dashboard = ({ onLogout }) => {
-  const { projects, addProject, updateProject, deleteProject } = useProjectContext()
+  const { projects, addProject, updateProject, deleteProject } = useProjects()
   const [showProjectForm, setShowProjectForm] = useState(false)
   const [editingProject, setEditingProject] = useState(null)
   const [activeTab, setActiveTab] = useState('overview')

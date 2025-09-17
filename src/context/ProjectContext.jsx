@@ -186,5 +186,8 @@ export const useProjects = () => {
   return context
 }
 
+// Alias for backward compatibility
+export const useProjectContext = useProjects
+
 export default ProjectContext
 

@@ -1,14 +1,15 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { projects as staticProjects } from '../data/projects'
-import { useProjectContext } from '../context/ProjectContext'
-import { FadeIn, SlideIn } from '../components/animations'
-import { TextReveal } from '../components/magicui/TextReveal'
-import { getImageUrl, getDisplayStatus, getStatusClasses } from '../utils/helpers'
+import { FiExternalLink, FiGithub, FiFilter } from 'react-icons/fi'
+import { useProjects } from '../context/ProjectContext'
+import { getImageUrl } from '../utils/helpers'
 
 const Projects = () => {
-  const { projects: contextProjects } = useProjectContext()
-  const [searchQuery, setSearchQuery] = useState('')
+  const { projects: contextProjects } = useProjects()
+  const [projects, setProjects] = useState([])
+  const [filteredProjects, setFilteredProjects] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
 
   // Static projeler + Context'ten eklenen projeleri birleştir
   const allProjects = [...contextProjects]
@@ -18,8 +19,8 @@ const Projects = () => {
 
   // Filtered featured projects based on search (only title and description)
   const filteredFeaturedProjects = featuredProjects.filter(project =>
-    project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.description.toLowerCase().includes(searchQuery.toLowerCase())
+    project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    project.description.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   return (
@@ -45,10 +46,9 @@ const Projects = () => {
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <TextReveal
-              text="My Projects"
-              className="text-6xl font-bold text-white mb-6"
-            />
+            <h1 className="text-6xl font-bold text-white mb-6">
+              My Projects
+            </h1>
             <p className="text-xl text-gray-400 leading-relaxed">
               Discover the projects I've built combining creativity and technology
             </p>
@@ -64,8 +64,8 @@ const Projects = () => {
               <input
                 type="text"
                 placeholder="Search by project name or technology..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
               />
               <svg className="absolute right-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,8 +73,8 @@ const Projects = () => {
               </svg>
             </div>
             <p className="text-center text-gray-400 text-sm mt-2">
-              {searchQuery.length < 3 
-                ? `Type at least ${3 - searchQuery.length} more character${3 - searchQuery.length === 1 ? '' : 's'} to search`
+              {searchTerm.length < 3 
+                ? `Type at least ${3 - searchTerm.length} more character${3 - searchTerm.length === 1 ? '' : 's'} to search`
                 : 'Search by project name or technology stack'
               }
             </p>
@@ -85,18 +85,16 @@ const Projects = () => {
       {/* Featured Projects - Siyah arka plan */}
       <section className="py-16 bg-black">
         <div className="container mx-auto px-4">
-          <SlideIn direction="left">
-            <h2 className="text-3xl font-bold text-white mb-8 text-center">
-              Featured Projects
-            </h2>
-          </SlideIn>
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">
+            Featured Projects
+          </h2>
           
           <div className="mb-8">
             <p className="text-gray-300 text-center text-lg">
               {filteredFeaturedProjects.length} project{filteredFeaturedProjects.length !== 1 ? 's' : ''} found
-              {searchQuery.length >= 3 && (
+              {searchTerm.length >= 3 && (
                 <span className="block text-sm text-gray-400 mt-1">
-                  Searching for: "{searchQuery}"
+                  Searching for: "{searchTerm}"
                 </span>
               )}
             </p>
@@ -141,8 +139,8 @@ const Projects = () => {
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors duration-300">{project.title}</h3>
-                        <span className={`px-4 py-2 rounded-full text-sm font-medium ${getStatusClasses(project.status)}`}>
-                          {getDisplayStatus(project.status)}
+                        <span className={`px-4 py-2 rounded-full text-sm font-medium ${project.status}`}>
+                          {project.status}
                         </span>
                       </div>
                       <p className="text-gray-300 mb-6 leading-relaxed text-lg">{project.description}</p>
@@ -183,7 +181,7 @@ const Projects = () => {
           </div>
 
           {/* No Results */}
-          {searchQuery.length >= 3 && filteredFeaturedProjects.length === 0 && (
+          {searchTerm.length >= 3 && filteredFeaturedProjects.length === 0 && (
             <div className="text-center py-12">
               <div className="max-w-md mx-auto">
                 <svg className="w-16 h-16 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +189,7 @@ const Projects = () => {
                 </svg>
                 
                 <button
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => setSearchTerm('')}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
