@@ -125,7 +125,7 @@ const Dashboard = ({ onLogout }) => {
       icon: FiPlus, 
       label: "New Project", 
       color: "from-blue-500 to-purple-500",
-      action: handleAddProject
+      action: () => setShowProjectForm(true) // Form'u aç
     },
     { 
       icon: FiEdit, 
@@ -304,7 +304,7 @@ const Dashboard = ({ onLogout }) => {
             projects={projects}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
-            onAdd={handleAddProject}
+            onAdd={() => setShowProjectForm(true)} // Form'u aç
           />
         )}
 
