@@ -83,8 +83,13 @@ export const ProjectProvider = ({ children }) => {
     dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
     try {
       const response = await apiService.getProjects()
-      if (response.success) {
-        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: response.data })
+      console.log('📋 Backend response:', response) // Debug için
+      
+      if (response.status === 'success') {
+        // ✅ Backend'den gelen format: response.data.projects
+        const projects = response.data.projects || []
+        console.log('📋 Projects loaded:', projects.length, 'projects') // Debug için
+        dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: projects })
       } else {
         dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: response.message })
       }
