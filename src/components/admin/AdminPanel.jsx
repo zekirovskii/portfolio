@@ -1,12 +1,18 @@
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FiLogOut, FiSettings, FiUsers, FiTrendingUp, FiPlus, FiEdit, FiTrash2 } from 'react-icons/fi'
-import { MagicCard } from '../magicui/MagicCard'
-import { ShineBorder } from '../magicui/ShineBorder'
-import { useAdminContext } from '../../context/AdminContext'
+import { FiLogOut, FiSettings, FiUsers, FiPlus } from 'react-icons/fi'
 import Dashboard from './Dashboard'
+import ProjectList from './ProjectList'
+import ProjectForm from './ProjectForm'
+import { useAdmin } from '../../context/AdminContext'
 
 const AdminPanel = () => {
-  const { logout } = useAdminContext()
+  const { logout } = useAdmin()
+  const [activeTab, setActiveTab] = useState('dashboard')
+
+  const handleLogout = () => {
+    logout()
+  }
 
   return <Dashboard onLogout={logout} />
 }

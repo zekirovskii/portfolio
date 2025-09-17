@@ -124,4 +124,7 @@ export const useAdmin = () => {
   return context
 }
 
+// Alias for backward compatibility
+export const useAdminContext = useAdmin
+
 export default AdminContext
