@@ -20,8 +20,8 @@ class ApiService {
         ...options.headers
       },
       ...options,
-      // Timeout ekleyin
-      signal: AbortSignal.timeout(10000) // 10 saniye timeout
+      // Timeout'u 30 saniyeye çıkarın
+      signal: AbortSignal.timeout(30000) // 30 saniye timeout
     }
 
     // Add auth token if available
@@ -121,11 +121,17 @@ class ApiService {
   // Admin API
   async adminLogin(email, password) {
     try {
-      console.log('🔐 Attempting login with:', { email })
+      console.log('🔐 Attempting login with:', { email, password })
+      
+      // Email ve password'u doğru formatta gönderin
       const result = await this.request('/admin/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ 
+          email: email, 
+          password: password 
+        })
       })
+      
       console.log('🔐 Login result:', result)
       return result
     } catch (error) {
