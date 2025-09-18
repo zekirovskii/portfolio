@@ -135,7 +135,7 @@ const Projects = () => {
               >
                 <div className="flex flex-col lg:flex-row">
                   {/* Resim - Sol taraf */}
-                  <div className="relative overflow-hidden lg:w-2/5 group/image h-48 lg:h-64 flex items-center justify-center bg-gray-800" style={{ margin: 'auto' }}>
+                  <div className="relative overflow-hidden lg:w-2/5 group/image h-48 lg:h-64 flex items-center justify-center bg-gray-800/60" style={{ margin: 'auto' }}>
                     <img
                       src={getImageUrl(project.image)}
                       alt={project.title}
@@ -159,7 +159,7 @@ const Projects = () => {
                   </div>
 
                   {/* İçerik - Sağ taraf */}
-                  <div className="p-8 lg:w-3/5 flex flex-col justify-between bg-gradient-to-br from-gray-800/40 to-gray-900/60">
+                  <div className="p-8 lg:w-3/5 flex flex-col justify-between bg-gray-800/60">
                     <div>
                       <h3 className="text-2xl font-bold text-white transition-colors mb-4 group-hover:text-blue-300">
                         {project.title}
