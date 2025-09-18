@@ -93,11 +93,16 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         
       } catch (error) {
         console.error('Resim yükleme hatası:', error)
-        // Hata durumunda placeholder resim
+        // Hata durumunda kullanıcıya bilgi ver
+        setErrors(prev => ({
+          ...prev,
+          image: 'Resim yüklenemedi. Lütfen tekrar deneyin veya farklı bir resim seçin.'
+        }))
+        // Resmi temizle
         setFormData(prev => ({
           ...prev,
-          image: '/images/placeholder-project.jpg',
-          imagePreview: '/images/placeholder-project.jpg'
+          image: null,
+          imagePreview: null
         }))
       } finally {
         setIsUploading(false)
@@ -219,15 +224,18 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
                     accept="image/*"
                     onChange={handleImageChange}
                     className="hidden"
+                    disabled={isUploading}
                   />
                   <label
                     htmlFor="image-upload"
-                    className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-600 rounded-xl cursor-pointer hover:border-blue-500 transition-colors"
+                    className={`flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-600 rounded-xl cursor-pointer hover:border-blue-500 transition-colors ${
+                      isUploading ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
                   >
                     <div className="text-center">
                       <FiImage className="mx-auto text-4xl text-gray-400 mb-2" />
                       <p className="text-gray-400">
-                        {formData.imagePreview ? 'Change image' : 'Upload image'}
+                        {isUploading ? 'Uploading...' : formData.imagePreview ? 'Change image' : 'Upload image'}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
                         PNG, JPG, GIF (Max 5MB)
