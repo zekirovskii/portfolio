@@ -1,5 +1,5 @@
 // API Service for backend communication
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-one-beige-70.vercel.app/api'
+const API_BASE_URL = 'https://backend-6hp4.onrender.com'
 
 class ApiService {
   constructor() {
@@ -16,9 +16,8 @@ class ApiService {
         'Content-Type': 'application/json',
         ...options.headers
       },
+      mode: 'cors',
       ...options,
-      // Timeout'u 30 saniyeye çıkarın
-       // 30 saniye timeout
     }
 
     // Add auth token if available
@@ -63,7 +62,7 @@ class ApiService {
   // Projects API
   async getProjects() {
     try {
-      const result = await this.request('/projects')
+      const result = await this.request('/api/projects')
       return result
     } catch (error) {
       // Fallback: boş array döndür
@@ -73,7 +72,7 @@ class ApiService {
 
   async createProject(projectData) {
     try {
-      const result = await this.request('/projects', {
+      const result = await this.request('/api/projects', {
         method: 'POST',
         body: JSON.stringify(projectData)
       })
@@ -85,43 +84,43 @@ class ApiService {
   }
 
   async updateProject(id, projectData) {
-    return this.request(`/projects/${id}`, {
+    return this.request(`/api/projects/${id}`, {
       method: 'PUT',
       body: JSON.stringify(projectData)
     })
   }
 
   async deleteProject(id) {
-    return this.request(`/projects/${id}`, {
+    return this.request(`/api/projects/${id}`, {
       method: 'DELETE'
     })
   }
 
   // Admin API
   async adminLogin(email, password) {
-  try {
-    const result = await this.request('/admin/login', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        username: email, // email yerine username gönder
-        password: password 
+    try {
+      const result = await this.request('/api/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          username: email,
+          password: password 
+        })
       })
-    })
-    
-    return result
-  } catch (error) {
-    throw error
+      
+      return result
+    } catch (error) {
+      throw error
+    }
   }
-}
 
   async adminLogout() {
-    return this.request('/admin/logout', {
+    return this.request('/api/admin/logout', {
       method: 'POST'
     })
   }
 
   async getAdminProfile() {
-    return this.request('/admin/profile')
+    return this.request('/api/admin/profile')
   }
 
   // Upload API
@@ -131,8 +130,7 @@ class ApiService {
       formData.append('image', file)
 
       const token = localStorage.getItem('adminToken')
-      
-      const response = await fetch(`${this.baseURL}/upload/image`, {
+      const response = await fetch(`${this.baseURL}/api/upload`, {
         method: 'POST',
         headers: {
           ...(token && { Authorization: `Bearer ${token}` })
