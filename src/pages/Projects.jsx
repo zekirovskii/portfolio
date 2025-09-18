@@ -131,11 +131,11 @@ const Projects = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 group max-w-6xl mx-auto shadow-2xl hover:shadow-blue-500/10"
+                className="bg-black backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 group max-w-6xl mx-auto shadow-2xl hover:shadow-blue-500/10"
               >
                 <div className="flex flex-col lg:flex-row">
                   {/* Resim - Sol taraf */}
-                  <div className="relative overflow-hidden lg:w-2/5 group/image h-48 lg:h-64 flex items-center justify-center bg-gray-800/60" style={{ margin: 'auto' }}>
+                  <div className="relative overflow-hidden lg:w-2/5 group/image h-48 lg:h-64 flex items-center justify-center bg-black" style={{ margin: 'auto' }}>
                     <img
                       src={getImageUrl(project.image)}
                       alt={project.title}
@@ -159,7 +159,7 @@ const Projects = () => {
                   </div>
 
                   {/* İçerik - Sağ taraf */}
-                  <div className="p-8 lg:w-3/5 flex flex-col justify-between bg-gray-800/60">
+                  <div className="p-8 lg:w-3/5 flex flex-col justify-between bg-black">
                     <div>
                       <h3 className="text-2xl font-bold text-white transition-colors mb-4 group-hover:text-blue-300">
                         {project.title}
