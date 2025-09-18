@@ -83,10 +83,12 @@ export const ProjectProvider = ({ children }) => {
     dispatch({ type: PROJECT_ACTIONS.SET_LOADING, payload: true })
     try {
       const response = await apiService.getProjects()
+      console.log('Backend\'den yüklenen projeler:', response)
       
       if (response.status === 'success') {
         // ✅ Backend'den gelen format: response.data.projects
         const projects = response.data.projects || []
+        console.log('İşlenen proje listesi:', projects)
         dispatch({ type: PROJECT_ACTIONS.SET_PROJECTS, payload: projects })
       } else {
         dispatch({ type: PROJECT_ACTIONS.SET_ERROR, payload: response.message })
@@ -111,10 +113,13 @@ export const ProjectProvider = ({ children }) => {
   // Add project
   const addProject = async (projectData) => {
     try {
+      console.log('Backend\'e gönderilen proje verisi:', projectData)
       const response = await apiService.createProject(projectData)
+      console.log('Backend\'den dönen response:', response)
       
       // Backend'den gelen format: {status: 'success', message: '...', data: {...}}
       if (response.status === 'success') {
+        console.log('Backend\'den dönen proje verisi:', response.data)
         dispatch({ type: PROJECT_ACTIONS.ADD_PROJECT, payload: response.data })
         return { success: true, data: response.data }
       } else {
