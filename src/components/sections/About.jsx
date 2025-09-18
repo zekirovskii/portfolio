@@ -113,7 +113,7 @@ const About = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-2 gap-8"
+            className="grid grid-cols-2 gap-4 lg:gap-8"
           >
             {stats.map((stat, index) => (
               <motion.div
@@ -124,15 +124,17 @@ const About = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 className="text-center"
               >
-                <MagicCard className="p-8 rounded-xl">
-                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <stat.icon className="text-white" size={24} />
+                <MagicCard className="p-4 lg:p-8 rounded-xl h-full flex flex-col">
+                  <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-3 lg:mb-4 flex-shrink-0">
+                    <stat.icon className="text-white" size={16} />
                   </div>
-                  <div className="text-3xl font-bold text-white dark:text-white light:text-black mb-2">
-                    {stat.value}
-                  </div>
-                  <div className="text-gray-400 dark:text-gray-400 light:text-gray-600">
-                    {stat.label}
+                  <div className="flex-grow flex flex-col justify-center">
+                    <div className="text-lg lg:text-3xl font-bold text-white dark:text-white light:text-black mb-1 lg:mb-2">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs lg:text-base text-gray-400 dark:text-gray-400 light:text-gray-600 line-clamp-2">
+                      {stat.label}
+                    </div>
                   </div>
                 </MagicCard>
               </motion.div>

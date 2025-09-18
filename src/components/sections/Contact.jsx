@@ -29,7 +29,7 @@ const Contact = () => {
     setSubmitStatus(null)
 
     try {
-      const response = await fetch('http://localhost:5050/api/mail/contact', {
+      const response = await fetch('/api/mail/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const Contact = () => {
         setSubmitStatus('error')
       }
     } catch (error) {
-      console.error('Mail gönderme hatası:', error)
+      console.error('Error sending email:', error)
       setSubmitStatus('error')
     } finally {
       setIsSubmitting(false)
@@ -111,20 +111,20 @@ const Contact = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Left Side - Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true, margin: "-100px" }}
-            className="space-y-8"
+            className="space-y-6 lg:space-y-8"
           >
             <div>
-              <h3 className="text-3xl font-bold text-white dark:text-white light:text-black mb-6">
+              <h3 className="text-2xl lg:text-3xl font-bold text-white dark:text-white light:text-black mb-4 lg:mb-6">
                 Let's Connect! 
               </h3>
-              <p className="text-lg text-gray-300 dark:text-gray-300 light:text-gray-600 leading-relaxed mb-8">
+              <p className="text-base lg:text-lg text-gray-300 dark:text-gray-300 light:text-gray-600 leading-relaxed mb-6 lg:mb-8">
                 I'm always excited to work on new projects and collaborate with amazing people. 
                 Whether you have a question, want to discuss a project, or just want to say hi, 
                 feel free to reach out!
@@ -132,8 +132,8 @@ const Contact = () => {
             </div>
 
             {/* Contact Information */}
-            <div className="grid md:grid-cols-2 gap-8 mb-12">
-              {contactInfo.map(({ icon: Icon, title, value, href, color, description }, index) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 mb-8 lg:mb-12">
+              {contactInfo.map(({ icon: Icon, title, value, valueShort, href, color, description }, index) => (
                 <motion.a
                   key={index}
                   href={href}
@@ -143,21 +143,23 @@ const Contact = () => {
                   viewport={{ once: true, margin: "-50px" }}
                   whileHover={{ scale: 1.05, y: -5 }}
                   whileTap={{ scale: 0.95 }}
-                  className="group"
+                  className="group h-full"
                 >
-                  <MagicCard className="p-8 text-center hover:scale-105 transition-all duration-300 rounded-xl">
-                    <div className={`w-16 h-16 bg-gradient-to-r ${color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
-                      <Icon className="text-white" size={28} />
+                  <MagicCard className="p-4 lg:p-6 text-center hover:scale-105 transition-all duration-300 rounded-xl h-full flex flex-col min-h-[180px]">
+                    <div className={`w-12 h-12 lg:w-14 lg:h-14 bg-gradient-to-r ${color} rounded-2xl flex items-center justify-center mx-auto mb-3 lg:mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg flex-shrink-0`}>
+                      <Icon className="text-white" size={18} />
                     </div>
-                    <h3 className="text-xl font-bold text-white dark:text-white light:text-black mb-2 group-hover:text-blue-400 transition-colors">
-                      {title}
-                    </h3>
-                    <p className="text-lg text-gray-300 dark:text-gray-300 light:text-gray-600 mb-2">
-                      {value}
-                    </p>
-                    <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-500">
-                      {description}
-                    </p>
+                    <div className="flex-grow flex flex-col justify-center">
+                      <h3 className="text-sm lg:text-lg font-bold text-white dark:text-white light:text-black mb-2 group-hover:text-blue-400 transition-colors">
+                        {title}
+                      </h3>
+                      <p className="text-sm lg:text-base text-gray-300 dark:text-gray-300 light:text-gray-600 mb-2 break-words leading-tight">
+                        {value}
+                      </p>
+                      <p className="text-xs lg:text-sm text-gray-400 dark:text-gray-400 light:text-gray-500 leading-tight">
+                        {description}
+                      </p>
+                    </div>
                   </MagicCard>
                 </motion.a>
               ))}
@@ -165,10 +167,10 @@ const Contact = () => {
 
             {/* Social Links */}
             <div>
-              <h4 className="text-xl font-semibold text-white dark:text-white light:text-black mb-4">
+              <h4 className="text-lg lg:text-xl font-semibold text-white dark:text-white light:text-black mb-3 lg:mb-4">
                 Follow Me
               </h4>
-              <div className="flex space-x-4">
+              <div className="flex flex-wrap gap-3 lg:gap-4">
                 {socialLinks.map(({ icon: Icon, href, label, color }, index) => (
                   <motion.a
                     key={index}
@@ -181,10 +183,10 @@ const Contact = () => {
                     viewport={{ once: true, margin: "-50px" }}
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.9 }}
-                    className={`p-4 rounded-2xl bg-gray-800/50 dark:bg-gray-800/50 light:bg-white/50 text-gray-400 dark:text-gray-400 light:text-gray-500 ${color} transition-all duration-300 backdrop-blur-sm hover:bg-gray-800/70 dark:hover:bg-gray-800/70 light:hover:bg-white/70 hover:shadow-lg`}
+                    className={`p-3 lg:p-4 rounded-2xl bg-gray-800/50 dark:bg-gray-800/50 light:bg-white/50 text-gray-400 dark:text-gray-400 light:text-gray-500 ${color} transition-all duration-300 backdrop-blur-sm hover:bg-gray-800/70 dark:hover:bg-gray-800/70 light:hover:bg-white/70 hover:shadow-lg`}
                     aria-label={label}
                   >
-                    <Icon size={22} />
+                    <Icon size={18} />
                   </motion.a>
                 ))}
               </div>
@@ -197,6 +199,7 @@ const Contact = () => {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true, margin: "-100px" }}
+            className="w-full"
           >
             <MagicCard className="p-8 rounded-xl">
               <h3 className="text-2xl font-bold text-white dark:text-white light:text-black mb-8">

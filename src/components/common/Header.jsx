@@ -43,8 +43,8 @@ const Header = () => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-black/80 backdrop-blur-md border-b border-gray-800' 
-          : 'bg-transparent'
+          ? 'bg-black/90 backdrop-blur-md border-b border-gray-800' 
+          : 'bg-black/20 backdrop-blur-sm' // Hero kısmında da hafif arka plan
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,7 +86,7 @@ const Header = () => {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-gray-300 hover:text-white transition-colors"
+            className="md:hidden p-2 text-white hover:text-blue-400 transition-colors bg-gray-800/50 rounded-lg"
           >
             {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
           </button>
@@ -99,19 +99,19 @@ const Header = () => {
           transition={{ duration: 0.3 }}
           className="md:hidden overflow-hidden"
         >
-          <div className="py-4 space-y-2">
+          <div className="py-4 space-y-2 bg-black/90 backdrop-blur-md rounded-lg mt-2 border border-gray-800">
             {navItems.map(({ path, label }) => (
               <Link
                 key={path}
                 to={path}
                 onClick={() => handleNavClick(path)}
-                className={`block px-4 py-3 rounded-lg transition-all duration-300 ${
+                className={`block px-4 py-3 rounded-lg transition-all duration-300 font-medium ${
                   isActive(path)
-                    ? 'text-blue-400 bg-blue-500/10'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
+                    ? 'text-blue-400 bg-blue-500/20'
+                    : 'text-white hover:text-blue-400 hover:bg-gray-800/50'
                 }`}
               >
-                <span className="font-medium">{label}</span>
+                <span>{label}</span>
               </Link>
             ))}
           </div>

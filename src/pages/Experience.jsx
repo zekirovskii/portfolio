@@ -84,9 +84,9 @@ const Experience = () => {
           >
             <TextReveal
               text="Experience & Education"
-              className="text-6xl font-bold text-white mb-6"
+              className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6"
             />
-            <p className="text-xl text-gray-400 leading-relaxed">
+            <p className="text-lg sm:text-xl text-gray-400 leading-relaxed">
               My professional journey and continuous development process
             </p>
           </motion.div>

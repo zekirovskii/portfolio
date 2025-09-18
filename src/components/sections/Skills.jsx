@@ -251,11 +251,11 @@ const Skills = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 className="text-center"
               >
-                <MagicCard className="p-6 rounded-xl">
-                  <div className="relative mb-4">
+                <MagicCard className="p-6 rounded-xl h-full flex flex-col">
+                  <div className="relative mb-4 flex-shrink-0">
                     {/* Circular Progress with Icon */}
-                    <div className="relative w-20 h-20 mx-auto">
-                      <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 36 36">
+                    <div className="relative w-16 h-16 mx-auto">
+                      <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 36 36">
                         <path
                           className="text-gray-700 dark:text-gray-700 light:text-gray-200"
                           stroke="currentColor"
@@ -279,19 +279,21 @@ const Skills = () => {
                       
                       {/* Icon in Center */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                          <skill.icon className="text-white" size={16} />
+                        <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                          <skill.icon className="text-white" size={12} />
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <h4 className="text-lg font-semibold text-white dark:text-white light:text-black mb-2">
-                    {skill.name}
-                  </h4>
-                  <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">
-                    {skill.description}
-                  </p>
+                  <div className="flex flex-col flex-grow">
+                    <h4 className="text-sm font-semibold text-white dark:text-white light:text-black mb-2 line-clamp-2">
+                      {skill.name}
+                    </h4>
+                    <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 line-clamp-3 flex-grow">
+                      {skill.description}
+                    </p>
+                  </div>
                 </MagicCard>
               </motion.div>
             ))}

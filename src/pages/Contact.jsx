@@ -299,7 +299,7 @@ Let's discuss how we can collaborate!
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto mb-20 auto-rows-fr">
             {contactInfo.map(({ icon: Icon, title, value, href, color, description }, index) => (
               <motion.a
                 key={index}
@@ -312,17 +312,17 @@ Let's discuss how we can collaborate!
                 whileTap={{ scale: 0.95 }}
                 className="group"
               >
-                <MagicCard className="p-8 text-center hover:scale-105 transition-all duration-300 rounded-xl">
-                  <div className={`w-16 h-16 bg-gradient-to-r ${color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
-                    <Icon className="text-white" size={28} />
+                <MagicCard className="p-6 lg:p-8 text-center hover:scale-105 transition-all duration-300 rounded-xl h-full flex flex-col justify-center">
+                  <div className={`w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-r ${color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg`}>
+                    <Icon className="text-white" size={20} />
                   </div>
-                  <h3 className="text-xl font-bold text-white dark:text-white light:text-black mb-2 group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg lg:text-xl font-bold text-white dark:text-white light:text-black mb-2 group-hover:text-blue-400 transition-colors">
                     {title}
                   </h3>
-                  <p className="text-lg text-gray-300 dark:text-gray-300 light:text-gray-600 mb-2">
+                  <p className="text-base lg:text-lg text-gray-300 dark:text-gray-300 light:text-gray-600 mb-2 break-words">
                     {value}
                   </p>
-                  <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-500">
+                  <p className="text-sm lg:text-sm text-gray-400 dark:text-gray-400 light:text-gray-500">
                     {description}
                   </p>
                 </MagicCard>
@@ -338,10 +338,10 @@ Let's discuss how we can collaborate!
             viewport={{ once: true, margin: "-50px" }}
             className="text-center"
           >
-            <h3 className="text-2xl font-bold text-white dark:text-white light:text-black mb-8">
+            <h3 className="text-xl lg:text-2xl font-bold text-white dark:text-white light:text-black mb-6 lg:mb-8">
               Follow Me
             </h3>
-            <div className="flex justify-center gap-8">
+            <div className="flex flex-col sm:flex-row justify-center gap-6 lg:gap-8">
               {socialLinks.map(({ icon: Icon, href, label, color, description }, index) => (
                 <motion.a
                   key={index}
@@ -357,15 +357,15 @@ Let's discuss how we can collaborate!
                   className="group"
                 >
                   <ShineBorder
-                    className="p-6 rounded-2xl bg-gray-800/50 dark:bg-gray-800/50 light:bg-white/50 backdrop-blur-sm hover:bg-gray-700/50 dark:hover:bg-gray-700/50 light:hover:bg-gray-100/50 transition-all duration-300 rounded-2xl"
+                    className="p-4 lg:p-6 rounded-2xl bg-gray-800/50 dark:bg-gray-800/50 light:bg-white/50 backdrop-blur-sm hover:bg-gray-700/50 dark:hover:bg-gray-700/50 light:hover:bg-gray-100/50 transition-all duration-300 rounded-2xl"
                     color="linear-gradient(45deg, #3b82f6, #8b5cf6)"
                   >
                     <div className="text-center">
-                      <Icon className={`text-3xl text-gray-400 dark:text-gray-400 light:text-gray-500 ${color} transition-colors duration-300 mx-auto mb-3`} />
-                      <h4 className="text-lg font-semibold text-white dark:text-white light:text-black group-hover:text-blue-400 transition-colors mb-1">
+                      <Icon className={`text-2xl lg:text-3xl text-gray-400 dark:text-gray-400 light:text-gray-500 ${color} transition-colors duration-300 mx-auto mb-2 lg:mb-3`} />
+                      <h4 className="text-base lg:text-lg font-semibold text-white dark:text-white light:text-black group-hover:text-blue-400 transition-colors mb-1">
                         {label}
                       </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-500 light:text-gray-400">
+                      <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-500 light:text-gray-400">
                         {description}
                       </p>
                     </div>
