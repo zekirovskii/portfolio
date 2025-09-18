@@ -135,7 +135,7 @@ const Projects = () => {
               >
                 <div className="flex flex-col lg:flex-row">
                   {/* Resim - Sol taraf */}
-                  <div className="relative overflow-hidden lg:w-2/5 group/image h-48 lg:h-64 flex items-center justify-center bg-gray-800">
+                  <div className="relative overflow-hidden lg:w-2/5 group/image h-48 lg:h-64 flex items-center justify-center bg-gray-800" style={{ margin: 'auto' }}>
                     <img
                       src={getImageUrl(project.image)}
                       alt={project.title}
