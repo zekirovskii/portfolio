@@ -37,8 +37,8 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         githubUrl: project.githubUrl || '',
         featured: project.featured || false,
         year: project.year || new Date().getFullYear().toString(),
-        image: null,
-        imagePreview: project.image || null
+        image: null, // Yeni resim için
+        imagePreview: project.image || null // Mevcut resmi göster
       })
     } else {
       setFormData({
@@ -155,15 +155,21 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         githubUrl: formData.githubUrl || '',
         featured: formData.featured,
         year: formData.year,
-        image: formData.imagePreview || formData.image || project?.image || '/images/placeholder-project.jpg'
+        // Düzenleme modunda: yeni resim varsa onu kullan, yoksa mevcut resmi koru
+        image: formData.imagePreview || project?.image || '/images/placeholder-project.jpg'
       }
       
-      // ID'leri temizle
-      delete projectData.id
-      delete projectData._id
-      delete projectData.createdAt
-      delete projectData.updatedAt
-      delete projectData.__v
+      // Düzenleme modunda ID'yi koru
+      if (project) {
+        projectData._id = project._id || project.id
+      } else {
+        // Yeni proje için ID'leri temizle
+        delete projectData.id
+        delete projectData._id
+        delete projectData.createdAt
+        delete projectData.updatedAt
+        delete projectData.__v
+      }
       
       await onSave(projectData)
       

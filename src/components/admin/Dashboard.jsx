@@ -267,7 +267,6 @@ const Dashboard = ({ onLogout }) => {
               <h2 className="text-3xl font-bold text-white text-center mb-8">Recent Projects</h2>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {projects
-                  .slice(0, 6) // İlk 6 projeyi al
                   .map((project, index) => (
                   <motion.div
                     key={`dashboard-project-${index}-${project._id || project.id || Date.now()}`}

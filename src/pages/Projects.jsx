@@ -131,48 +131,48 @@ const Projects = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-slate-800/50 backdrop-blur-sm rounded-xl overflow-hidden border border-slate-700 hover:border-blue-500/50 transition-all duration-300 group max-w-6xl mx-auto"
+                className="bg-gradient-to-br from-gray-900/80 to-gray-800/60 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-700/50 hover:border-blue-500/50 transition-all duration-500 group max-w-6xl mx-auto shadow-2xl hover:shadow-blue-500/10"
               >
                 <div className="flex flex-col lg:flex-row">
-                  {/* Resim - Sol taraf - Web projeleri için daha geniş */}
-                  <div className="relative overflow-hidden lg:w-2/5">
+                  {/* Resim - Sol taraf */}
+                  <div className="relative overflow-hidden lg:w-2/5 group/image">
                     <img
                       src={getImageUrl(project.image)}
                       alt={project.title}
-                      className="w-full h-48 lg:h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-48 lg:h-64 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
                     {/* Status Badge */}
-                    <div className="absolute top-3 right-3">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    <div className="absolute top-4 right-4">
+                      <span className={`px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-md shadow-lg ${
                         project.status === 'published' || project.status === 'Completed'
-                          ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                          ? 'bg-green-500/30 text-green-300 border border-green-400/40'
                           : project.status === 'draft' || project.status === 'In Progress'
-                          ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-                          : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                          ? 'bg-yellow-500/30 text-yellow-300 border border-yellow-400/40'
+                          : 'bg-gray-500/30 text-gray-300 border border-gray-400/40'
                       }`}>
                         {getDisplayStatus(project.status)}
                       </span>
                     </div>
                   </div>
 
-                  {/* İçerik - Sağ taraf - Gri arka plan */}
-                  <div className="p-6 lg:w-3/5 flex flex-col justify-between bg-gray-900/50">
+                  {/* İçerik - Sağ taraf */}
+                  <div className="p-8 lg:w-3/5 flex flex-col justify-between bg-gradient-to-br from-gray-800/40 to-gray-900/60">
                     <div>
-                      <h3 className="text-xl font-bold text-white transition-colors mb-3">
+                      <h3 className="text-2xl font-bold text-white transition-colors mb-4 group-hover:text-blue-300">
                         {project.title}
                       </h3>
                       
-                      <p className="text-gray-600 mb-4 leading-relaxed line-clamp-3">
+                      <p className="text-gray-300 mb-6 leading-relaxed line-clamp-3 text-base">
                         {project.description}
                       </p>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-2 mb-6">
                         {project.technologies?.map((tech, techIndex) => (
                           <span
                             key={techIndex}
-                            className="px-3 py-1 bg-gray-700/50 text-gray-300 text-sm rounded-full border border-gray-600/50"
+                            className="px-3 py-1.5 bg-blue-500/20 text-blue-300 text-sm rounded-full border border-blue-400/30 hover:bg-blue-500/30 transition-colors duration-200"
                           >
                             {tech}
                           </span>
@@ -181,13 +181,13 @@ const Projects = () => {
                     </div>
 
                     {/* Butonlar */}
-                    <div className="flex gap-3">
+                    <div className="flex gap-4">
                       {project.liveUrl && (
                         <a
                           href={project.liveUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-500/25 text-sm"
+                          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-blue-500/25 text-sm hover:scale-105 transform"
                         >
                           <FiExternalLink className="w-4 h-4" />
                           Live Demo
@@ -198,7 +198,7 @@ const Projects = () => {
                           href={project.githubUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-all duration-300 font-semibold text-sm"
+                          className="flex items-center gap-2 px-6 py-3 bg-gray-700/50 hover:bg-gray-600/50 text-white rounded-xl hover:bg-gray-600 transition-all duration-300 font-semibold text-sm border border-gray-600/50 hover:border-gray-500/50 hover:scale-105 transform"
                         >
                           <FiGithub className="w-4 h-4" />
                           GitHub
