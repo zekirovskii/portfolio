@@ -105,11 +105,15 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         console.log('Resim yükleme başarılı:', uploadResult)
         
         // Yüklenen resmin URL'ini kullan
-        setFormData(prev => ({
-          ...prev,
-          image: uploadResult.url,
-          imagePreview: uploadResult.url
-        }))
+        setFormData(prev => {
+          const newData = {
+            ...prev,
+            image: uploadResult.url,
+            imagePreview: uploadResult.url
+          }
+          console.log('FormData güncellendi:', newData)
+          return newData
+        })
         
         // Hata mesajını temizle
         setErrors(prev => ({
@@ -161,6 +165,9 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         // Backend'e gönderilecek resim URL'i
         image: formData.imagePreview || formData.image || project?.image || '/images/placeholder-project.jpg'
       }
+      
+      console.log('Proje kaydediliyor:', projectData)
+      console.log('Resim URL:', projectData.image)
       
       // ID'leri temizle (backend'de yeni ID oluşturulacak veya mevcut ID kullanılacak)
       delete projectData.id
