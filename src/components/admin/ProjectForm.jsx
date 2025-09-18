@@ -79,24 +79,49 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
   const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (file) {
-      // Önce resmi backend'e yükle
+      // Dosya boyutunu kontrol et
+      if (file.size > 5 * 1024 * 1024) { // 5MB
+        setErrors(prev => ({
+          ...prev,
+          image: 'Dosya boyutu 5MB\'dan büyük olamaz.'
+        }))
+        return
+      }
+
+      // Dosya tipini kontrol et
+      if (!file.type.startsWith('image/')) {
+        setErrors(prev => ({
+          ...prev,
+          image: 'Lütfen geçerli bir resim dosyası seçin.'
+        }))
+        return
+      }
+
       try {
         setIsUploading(true)
+        console.log('Resim yükleme başlıyor:', file.name)
+        
         const uploadResult = await apiService.uploadImage(file)
+        console.log('Resim yükleme başarılı:', uploadResult)
         
         // Yüklenen resmin URL'ini kullan
         setFormData(prev => ({
           ...prev,
-          image: uploadResult.url, // Backend'den gelen URL
+          image: uploadResult.url,
           imagePreview: uploadResult.url
+        }))
+        
+        // Hata mesajını temizle
+        setErrors(prev => ({
+          ...prev,
+          image: ''
         }))
         
       } catch (error) {
         console.error('Resim yükleme hatası:', error)
-        // Hata durumunda kullanıcıya bilgi ver
         setErrors(prev => ({
           ...prev,
-          image: 'Resim yüklenemedi. Lütfen tekrar deneyin veya farklı bir resim seçin.'
+          image: `Resim yüklenemedi: ${error.message}`
         }))
         // Resmi temizle
         setFormData(prev => ({
