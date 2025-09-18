@@ -29,7 +29,7 @@ const Contact = () => {
     setSubmitStatus(null)
 
     try {
-      const response = await fetch('/api/mail/contact', {
+      const response = await fetch('https://backend-one-beige-70.vercel.app/api/mail/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
