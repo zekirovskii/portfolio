@@ -162,6 +162,10 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
       // Düzenleme modunda ID'yi koru
       if (project) {
         projectData._id = project._id || project.id
+        console.log('🔄 Güncellenecek proje verisi:', projectData)
+        console.log(' Mevcut resim:', project?.image)
+        console.log(' Yeni resim:', formData.imagePreview)
+        console.log('🔄 Kullanılacak resim:', projectData.image)
       } else {
         // Yeni proje için ID'leri temizle
         delete projectData.id
@@ -169,6 +173,7 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         delete projectData.createdAt
         delete projectData.updatedAt
         delete projectData.__v
+        console.log('➕ Yeni proje verisi:', projectData)
       }
       
       await onSave(projectData)
