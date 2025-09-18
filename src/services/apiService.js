@@ -127,13 +127,10 @@ class ApiService {
   // Upload API
   async uploadImage(file) {
     try {
-      console.log('Resim yükleniyor:', file.name, file.size)
-      
       const formData = new FormData()
       formData.append('image', file)
 
       const token = localStorage.getItem('adminToken')
-      console.log('Token var mı:', !!token)
       
       const response = await fetch(`${this.baseURL}/upload/image`, {
         method: 'POST',
@@ -143,21 +140,16 @@ class ApiService {
         body: formData
       })
 
-      console.log('Upload response status:', response.status)
-
       if (!response.ok) {
         const errorText = await response.text()
-        console.error('Upload failed:', errorText)
         throw new Error(`Upload failed: ${response.status} - ${errorText}`)
       }
 
       const result = await response.json()
-      console.log('Upload success:', result)
       return { url: result.data.url }
       
     } catch (error) {
-      console.error('Upload error:', error)
-      throw error // Hata fırlat, placeholder döndürme
+      throw error
     }
   }
 }

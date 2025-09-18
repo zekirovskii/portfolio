@@ -99,21 +99,14 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
 
       try {
         setIsUploading(true)
-        console.log('Resim yükleme başlıyor:', file.name)
-        
         const uploadResult = await apiService.uploadImage(file)
-        console.log('Resim yükleme başarılı:', uploadResult)
         
         // Yüklenen resmin URL'ini kullan
-        setFormData(prev => {
-          const newData = {
-            ...prev,
-            image: uploadResult.url,
-            imagePreview: uploadResult.url
-          }
-          console.log('FormData güncellendi:', newData)
-          return newData
-        })
+        setFormData(prev => ({
+          ...prev,
+          image: uploadResult.url,
+          imagePreview: uploadResult.url
+        }))
         
         // Hata mesajını temizle
         setErrors(prev => ({
@@ -157,19 +150,15 @@ const ProjectForm = ({ project, onSave, onCancel, isOpen }) => {
         description: formData.description,
         technologies: formData.technologies.split(',').map(tech => tech.trim()).filter(tech => tech),
         category: formData.category,
-        status: formData.status, // Backend'de mapping yapılacak
+        status: formData.status,
         liveUrl: formData.liveUrl || '',
         githubUrl: formData.githubUrl || '',
         featured: formData.featured,
         year: formData.year,
-        // Backend'e gönderilecek resim URL'i
         image: formData.imagePreview || formData.image || project?.image || '/images/placeholder-project.jpg'
       }
       
-      console.log('Proje kaydediliyor:', projectData)
-      console.log('Resim URL:', projectData.image)
-      
-      // ID'leri temizle (backend'de yeni ID oluşturulacak veya mevcut ID kullanılacak)
+      // ID'leri temizle
       delete projectData.id
       delete projectData._id
       delete projectData.createdAt
